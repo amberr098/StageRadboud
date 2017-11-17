@@ -3,14 +3,14 @@ titleAlign <- NULL
 subtitleAlign <- NULL
 
 myServer <- function(input, output, session) {
-
+  # Upload button op Dataset tab
   observeEvent(input$upload, {
     source("app_observeUploadButton.R")
     checkFile(input$file1$datapath, input$file1, session)
   })
   
+  # Plot  button op Settings tab
   observeEvent(input$plot, {
-    
     # Exception als er geen moleculen of sampels zijn geselecteerd maar er wel op de plot button geklikt wordt
     if(!is.null(input$MolCheckBox) && !is.null(input$SamCheckBox)){
       updateTabsetPanel(session = session, inputId = "tabs", selected = "Results")
@@ -32,6 +32,7 @@ myServer <- function(input, output, session) {
     # Alle data die hoort bij de gekozen instellingen
     specific_data <- getData(input$abs_norm, input$av_ind, data_NoRT)
     
+    # Ophalen en weergeven van de geselecteerde waardes.
     if(!is.null(input$MolCheckBox) && !is.null(input$SamCheckBox)){
       source("Visualization.R")
       selected_matrix <- getSelectedMatrix(specific_data, input$av_ind, input$MolCheckBox,input$SamCheckBox)
@@ -104,6 +105,7 @@ myServer <- function(input, output, session) {
       p + coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
     })
       
+      # Wanneer er een vak word geselecteerd in de plot en er twee keer op geklikt wordt
       observeEvent(input$plot1_dblclick, {
         brush <- input$plot1_brush
         if (!is.null(brush)) {
@@ -115,7 +117,7 @@ myServer <- function(input, output, session) {
         }
       })
       
-      # Barplot maken. Er een globale functie van maken (<<-) omdat hij ook aangeroepen wordt bij de download button
+      # Barplot maken. Een globale functie maken van plotInput (<<-), plotInput wordt ook aangeroepen bij downloaden plot 
       plotInput <<- function(){
         source("app_BoldItalic.R")
         typeTitle <- getTypeTitle(input$LTB, input$LTI)
@@ -130,11 +132,8 @@ myServer <- function(input, output, session) {
         
       }
   })
-  
 
-  
-  
-  # Downloaden van de plot
+  # Download button op Results tab waarbij er een keuze gemaakt moet worden tussen 72 of 300 dpi
   observeEvent(input$download, {
     showModal(modalDialog(
       radioButtons(inputId = "resolution",
@@ -150,6 +149,7 @@ myServer <- function(input, output, session) {
     )
   })
   
+  # Downloaden van de plot nadat de keuze is gemaakt voor 72 of 300 dpi
   output$downloadPlot <- downloadHandler(
     filename = "ShinyPlot.png",
     
@@ -159,6 +159,7 @@ myServer <- function(input, output, session) {
     }
   )
   
+  # Cancel button in de popup voor de keuze voor 72 of 300 dpi
   observeEvent(input$cancel, {
     removeModal()
   })
