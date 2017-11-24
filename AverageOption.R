@@ -2,7 +2,7 @@ library(reshape2)
 library(ggplot2)
 
 getMatrix <- function(plot_data, molecules, samples){
-  pattern_Tag <- "_."
+  pattern_Tag <- "_.*"
   selected_df <- data.frame()
 
   av_matrix <- plot_data$average
@@ -47,10 +47,11 @@ getMatrix <- function(plot_data, molecules, samples){
 
 
 plotBar <- function(both_df){
+  print(both_df)
   standDev <- both_df$SD/2 
   max_y <- max(both_df$Average + standDev)*0.15 + max(both_df$Average + standDev)
   min_y <- min(both_df$Average - standDev)*0.15 + min(both_df$Average - standDev)
-  
+  print(min_y)
   if(min_y > 0){
     min_y <- 0
   }

@@ -8,7 +8,7 @@ getSameSamples <- function(data){
   index_Type <- which(data == "Type", arr.ind = TRUE)
   col_Type <- index_Type[1,2]
 
-  pattern_Tag <- "_."
+  pattern_Tag <- "_.*"
   all_Tags <- c()
   all_Types <- c()
   
