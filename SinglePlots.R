@@ -14,8 +14,8 @@ getPlotAvAbs <- function(av_matrix, sd_matrix){
       # Alle mogelijke combinaties van molecule en sample in een matrix.
       allComb_mat[count,1] <- molecule
       allComb_mat[count,2] <- sample
-      allComb_mat[count,3] <- average
-      allComb_mat[count,4] <- sd
+      allComb_mat[count,3] <- as.numeric(average)
+      allComb_mat[count,4] <- as.numeric(sd)
     }
   }
   allComb_DatF <- as.data.frame(allComb_mat, stringsAsFactors=FALSE)
@@ -24,25 +24,28 @@ getPlotAvAbs <- function(av_matrix, sd_matrix){
 }
 
 setPlotAvAbs <- function(allComb_DatF){
-  std <- as.numeric(as.character(allComb_DatF$SD))/2
+  library(scales)
   
-  # bepalen van de standaard error.
-  y_minStd <- as.numeric(as.character(allComb_DatF$Average))-std
-  y_maxStd <- as.numeric(as.character(allComb_DatF$Average))+std
+  sd <- as.numeric(allComb_DatF$SD)
+  half_sd <- as.numeric(as.character(sd))/2
+
+  # De kolommen 3 en 4 numeric maken (Average en SD kolom)
+  allComb_DatF[3] <- lapply(allComb_DatF[3], function(x) as.numeric(as.character(x)))
+  allComb_DatF[4] <- lapply(allComb_DatF[4], function(x) as.numeric(as.character(x)))
   
-  # Bepalen hoever de hoogste en laagste bar van de rand afzitten.
-  y_minBar <- min(y_minStd)*0.15 + min(y_minStd)
-  y_maxBar <- max(y_maxStd)*0.15 + max(y_maxStd)
+  # De hoogte van de plots bepalen
+  max_y <- max(allComb_DatF$Average + sd)*0.15 + max(allComb_DatF$Average + sd)
+  min_y <- min(allComb_DatF$Average - sd)*0.15 + min(allComb_DatF$Average - sd)
   
-  if(y_minBar > 0){
-    y_minBar <- 0
+  if(min_y > 0){
+    min_y <- 0
   }
   
-  library(scales)
-  p <- ggplot(allComb_DatF, aes(x = Samples, y = Average, fill = Samples))+
-    geom_bar(position = position_dodge(), stat = "identity") +
+  p <- ggplot(allComb_DatF, aes(x = Samples, y = Average, fill = Samples, ymin = Average-half_sd, ymax = Average+half_sd))+
+    geom_bar(stat = "identity", position = position_dodge()) +
     facet_wrap(~Molecules)+
-    geom_errorbar(aes(ymin = y_minStd, ymax = y_maxStd), width=.2, position=position_dodge(.9))
+    geom_errorbar() +
+    scale_y_continuous(labels = comma, limits = c(min_y, max_y))
   
   return(p)
 }
@@ -65,5 +68,29 @@ getPlotIndAbs <- function(selected_matrix){
     }
   }
   allComb_DF <- as.data.frame(allComb_m)
-  return(allComb_DF)
+  p <- setPlotIndAbs(allComb_DF)
+  
+  return(p)
+}
+
+setPlotIndAbs <- function(allComb_DF){
+  library(scales)
+  print(allComb_DF)
+  # De kolom 3 numeric maken (Value kolom)
+  allComb_DF[3] <- lapply(allComb_DF[3], function(x) as.numeric(as.character(x)))
+  
+  # De maximum en minimum van de hoogte van de plot bepalen
+  max_y <- max(allComb_DF$Values)*0.15 + max(allComb_DF$Values)
+  min_y <- min(allComb_DF$Values)*0.15 + min(allComb_DF$Values)
+  
+  if(min_y > 0){
+    min_y <- 0
+  }
+
+  p <- ggplot(allComb_DF, aes(x = Samples, y = Values, fill = Samples))+
+    geom_bar(stat = "identity", position = position_dodge(),colour="black",size=0.1, width = 0.4) +
+    facet_wrap(~Molecules)+
+    scale_y_continuous(label = comma, limits = c(min_y, max_y))
+  
+  return(p)
 }

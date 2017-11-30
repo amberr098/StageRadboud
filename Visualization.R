@@ -25,6 +25,7 @@ setOnePlot <- function(plotMatrix, table_type){
 }
 
 setMultiplePlots <- function(selected_matrix, avind){
+  
   if(avind == "av"){
     source("SinglePlots.R")
     p <- getPlotAvAbs(selected_matrix$average, selected_matrix$standDev)
@@ -32,12 +33,7 @@ setMultiplePlots <- function(selected_matrix, avind){
   }
   else if(avind == "ind"){
     source("SinglePlots.R")
-    allComb_DF <- getPlotIndAbs(selected_matrix)
-    
-    p <- ggplot(allComb_DF, aes(x = Samples, y = Values, fill = Samples))+
-      geom_bar(position = position_dodge(), stat = "identity",colour="black",size=0.1, width = 0.4) +
-      facet_wrap(~Molecules)
-    
+    p <- getPlotIndAbs(selected_matrix)
     return(p)
   }
 }
