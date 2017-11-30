@@ -30,32 +30,47 @@ myServer <- function(input, output, session) {
 
     source("PlotData.R")
     # Alle data die hoort bij de gekozen instellingen
-    specific_data <- getData(input$abs_norm, input$av_ind, data_NoRT)
+    specific_data <- getData(input$abs_norm, input$av_ind, data_NoRT, input$ShowSingleMolecule)
     
     # Ophalen en weergeven van de geselecteerde waardes.
     if(!is.null(input$MolCheckBox) && !is.null(input$SamCheckBox)){
-      source("Visualization.R")
-      selected_matrix <- getSelectedMatrix(specific_data, input$av_ind, input$MolCheckBox,input$SamCheckBox)
-      
-      if(input$av_ind == "ind"){
-        temp_selectmatrix <- showDataTable(selected_matrix)
-
-        # Visualisatie waardes in datatabel weergeven als 10.000,5 ipv 10000.5
-        selectmatrix <- format.data.frame(temp_selectmatrix, big.mark = ".", decimal.mark = ",")
+      # Hangt van de switch af hoe het het geselecteerde dataframe eruit moet komen te zien.
+      if(input$ShowSingleMolecule == FALSE){
+        source("Visualization.R")
+        selected_matrix <- getSelectedMatrix(specific_data, input$av_ind, input$MolCheckBox,input$SamCheckBox)
         
-        output$dataTable <- renderDataTable({
-          selectmatrix
-        })
-      }else{
-        output$dataTable <- renderDataTable({
+        if(input$av_ind == "ind"){
+          temp_selectmatrix <- showDataTable(selected_matrix)
+  
           # Visualisatie waardes in datatabel weergeven als 10.000,5 ipv 10000.5
-          format_selected_matrix <- format.data.frame(selected_matrix, big.mark = ".", decimal.mark = ",", scientific = TRUE)
+          selectmatrix <- format.data.frame(temp_selectmatrix, big.mark = ".", decimal.mark = ",")
           
-          format_selected_matrix
-        })
+          output$dataTable <- renderDataTable({
+            selectmatrix
+          })
+        }else{
+          output$dataTable <- renderDataTable({
+            # Visualisatie waardes in datatabel weergeven als 10.000,5 ipv 10000.5
+            format_selected_matrix <- format.data.frame(selected_matrix, big.mark = ".", decimal.mark = ",", scientific = TRUE)
+            
+            format_selected_matrix
+          })
+        }
+      }else{
+        source("switchTrue.R")
+        selected_matrix <- setSelectedMatrix(specific_data, input$MolCheckBox, input$SamCheckBox, input$abs_norm, input$av_ind)
       }
     }
-    p <- setPlot(selected_matrix, input$av_ind)
+
+    if(input$ShowSingleMolecule == FALSE){
+      source("Visualization.R")
+      p <- setOnePlot(selected_matrix, input$av_ind)
+      
+    }else{
+      source("Visualization.R")
+      p <- setMultiplePlots(selected_matrix, input$av_ind)
+    }
+   
     ranges <- reactiveValues(x = NULL, y = NULL)
     
     # De output wanneer er ingezoomed wordt. 

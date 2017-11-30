@@ -26,7 +26,14 @@ tabSettings <- tabPanel("Settings",icon = icon("gear"),
                                                      label = "Select molecule(s)", 
                                                      choices = c(), options = list('actions-box' = TRUE), 
                                                      multiple = TRUE
-                                                     )),
+                                                     ),
+                                                     
+                                                     materialSwitch(
+                                                       inputId = "ShowSingleMolecule",
+                                                       label = "Show samples seperated",
+                                                       value = FALSE,
+                                                       right = TRUE,
+                                                       status = "succes")),
                                                    
                                                    column(4, pickerInput(
                                                      inputId = "SamCheckBox", 

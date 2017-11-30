@@ -1,4 +1,4 @@
-getData <- function(abs_norm, av_ind, data_NoRT){
+getData <- function(abs_norm, av_ind, data_NoRT, sinMol){
 
   if(abs_norm == "abs"){
     # Als er is gekozen voor Absolute + Average
@@ -25,6 +25,7 @@ getData <- function(abs_norm, av_ind, data_NoRT){
     if(av_ind == "av"){
       source("SameSamples.R")
       average_stanDev_norm <- getSameSamples(as.data.frame(norm_Responses))
+
       return(average_stanDev_norm)
     }else{
       # Als er is gekozen voor Normalized + Individual
