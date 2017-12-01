@@ -59,7 +59,7 @@ myServer <- function(input, output, session) {
       }else{
         source("switchTrue.R")
         selected_matrix <- setSelectedMatrix(specific_data, input$MolCheckBox, input$SamCheckBox, input$abs_norm, input$av_ind)
-      }
+        }
     }
 
     if(input$ShowSingleMolecule == FALSE){

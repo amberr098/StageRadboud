@@ -28,12 +28,12 @@ setMultiplePlots <- function(selected_matrix, avind){
   
   if(avind == "av"){
     source("SinglePlots.R")
-    p <- getPlotAvAbs(selected_matrix$average, selected_matrix$standDev)
+    p <- getPlotAverage(selected_matrix$average, selected_matrix$standDev)
     return(p)
   }
   else if(avind == "ind"){
     source("SinglePlots.R")
-    p <- getPlotIndAbs(selected_matrix)
+    p <- getPlotIndividual(selected_matrix)
     return(p)
   }
 }
