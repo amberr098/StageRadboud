@@ -69,7 +69,6 @@ getPlotIndividual <- function(selected_matrix){
   }
   allComb_DF <- as.data.frame(allComb_m,stringsAsFactors=FALSE)
   p <- setPlotIndividual(allComb_DF)
-  print(allComb_DF)
   return(p)
 }
 
@@ -86,11 +85,9 @@ setPlotIndividual <- function(allComb_DF){
   if(min_y > 0){
     min_y <- 0
   }
-  
-  p <- ggplot(allComb_DF, aes(x = Samples, y = as.factor(Values), fill = Samples))+
-    geom_bar(position = position_dodge(), stat = "identity", colour="black", size = 0.2 ) +
-    facet_wrap(~Molecules)
-  # +
-  #   scale_y_continuous(label = comma, limits = c(min_y, max_y))
+  p <- ggplot(allComb_DF, aes(x = Samples, y = Values, fill = Samples, group = factor(Values)))+
+    geom_bar(position = position_dodge(), stat = "identity", colour="white", size = 0.5, width = 0.5) +
+    facet_wrap(~Molecules) +
+    scale_y_continuous(limits = c(min_y, max_y), labels = comma)
   return(p)
 }

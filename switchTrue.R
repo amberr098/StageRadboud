@@ -1,8 +1,8 @@
-setSelectedMatrix <- function(data, molecules, samples, absnorm, avind){
+setSelectedMatrix <- function(data, molecules, samples, absnorm, avind, type){
   if(avind == "av"){
     matAv <- matrix(NA, nrow = length(samples), ncol = length(molecules))
     matSd <- matrix(NA, nrow = length(samples), ncol = length(molecules))
-    
+
     avMa <- data$average
     sdMa <- data$standDev
     
@@ -10,10 +10,16 @@ setSelectedMatrix <- function(data, molecules, samples, absnorm, avind){
     for(mol in molecules){
       colMat <- colMat + 1
       mol_res <- paste0(mol, " Results")
+
       column <- which(colnames(avMa) == mol_res, arr.ind = TRUE)
       
       rowMat <- 0
       for(sam in samples){
+
+        if(type == FALSE){
+          sam <- paste0("_", sam)
+        }
+        
         rowMat <- rowMat +1
         row <- which(rownames(avMa) == sam, arr.ind = TRUE)
         
@@ -38,6 +44,11 @@ setSelectedMatrix <- function(data, molecules, samples, absnorm, avind){
   else{
     mat <- matrix(NA, ncol = length(molecules)+1)
       for(sam in samples){
+        if(type == FALSE){
+          sam <- paste0("_", sam)
+        }
+        print(data)
+        print(sam)
         row_temp <- which(data == sam, arr.ind = TRUE)
         row <- row_temp[1:nrow(row_temp),1]
         

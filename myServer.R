@@ -57,8 +57,14 @@ myServer <- function(input, output, session) {
           })
         }
       }else{
+        checkType <- (which(data == "Type", arr.ind = TRUE))
+        if(data[2,checkType[1,2]] == "Sample"){
+          type <- FALSE
+        }else{
+          type <- TRUE
+        }
         source("switchTrue.R")
-        selected_matrix <- setSelectedMatrix(specific_data, input$MolCheckBox, input$SamCheckBox, input$abs_norm, input$av_ind)
+        selected_matrix <- setSelectedMatrix(specific_data, input$MolCheckBox, input$SamCheckBox, input$abs_norm, input$av_ind, type)
         }
     }
 

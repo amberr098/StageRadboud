@@ -30,7 +30,7 @@ tabSettings <- tabPanel("Settings",icon = icon("gear"),
                                                      
                                                      materialSwitch(
                                                        inputId = "ShowSingleMolecule",
-                                                       label = "Show samples seperated",
+                                                       label = "Show molecules seperated",
                                                        value = FALSE,
                                                        right = TRUE,
                                                        status = "succes")),
