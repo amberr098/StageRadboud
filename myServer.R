@@ -44,7 +44,6 @@ myServer <- function(input, output, session) {
   
           # Visualisatie waardes in datatabel weergeven als 10.000,5 ipv 10000.5
           selectmatrix <- format.data.frame(temp_selectmatrix, big.mark = ".", decimal.mark = ",")
-          
           output$dataTable <- renderDataTable({
             selectmatrix
           })
@@ -52,19 +51,36 @@ myServer <- function(input, output, session) {
           output$dataTable <- renderDataTable({
             # Visualisatie waardes in datatabel weergeven als 10.000,5 ipv 10000.5
             format_selected_matrix <- format.data.frame(selected_matrix, big.mark = ".", decimal.mark = ",", scientific = TRUE)
-            
             format_selected_matrix
           })
         }
       }else{
+        # Controleren of het bestand waardes in de kolom Type heeft.
         checkType <- (which(data == "Type", arr.ind = TRUE))
         if(data[2,checkType[1,2]] == "Sample"){
           type <- FALSE
         }else{
           type <- TRUE
         }
+        
+        # Ophalen van de geselecteerde data.
         source("switchTrue.R")
         selected_matrix <- setSelectedMatrix(specific_data, input$MolCheckBox, input$SamCheckBox, input$abs_norm, input$av_ind, type)
+        
+        if(input$av_ind == "av"){
+          # Format voor de te visualiseren datatabel maken.
+          source("SinglePlots.R")
+          showData <- getAverageData(selected_matrix)
+          
+          output$dataTable <- renderDataTable({
+            showData
+          })
+        }else{
+          output$dataTable <- renderDataTable({
+            selected_matrix
+          })
+        }
+
         }
     }
 

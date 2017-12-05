@@ -38,8 +38,6 @@ setMultiplePlots <- function(selected_matrix, avind){
   }
 }
 
-
-
 showDataTable <- function(dataTable){
   asColumn <- rownames(dataTable)
   # Wordt geen warning weergeven door suppressWarnings(). 

@@ -171,4 +171,5 @@ showSettings <- function(output){
                block = TRUE,
                no_outline = FALSE)
   })
+
 }
