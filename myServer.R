@@ -3,10 +3,53 @@ titleAlign <- NULL
 subtitleAlign <- NULL
 
 myServer <- function(input, output, session) {
+  observeEvent(input$SubmitTypeOfPlot,{
+    plotType <- input$typeOfPlot
+    
+    if(plotType == "Stady state"){
+      
+      output$setSelectFile <- renderUI({
+        fileInput('file1', 'Select your file')
+      })
+      
+      output$setUploadButton <- renderUI({
+        actionButton("upload", "Upload data")
+      })
+      
+      
+      source("SetSettings.R")
+      setSettingsStSt(output)
+      
+      observeEvent(input$ShowSingleMolecule, {
+        if(input$ShowSingleMolecule == TRUE){
+          output$set_y_axis_scale <- renderUI({
+            pickerInput(inputId = "scale_y_axis",
+                        label = "Choose scale y-axis",
+                        choices = c("Same y-axis scales" = "fixed", "Different y-axis scales" = "free"),
+                        multiple = FALSE)
+          })
+        }else{
+          output$set_y_axis_scale <- renderUI({
+            NULL
+          })
+        }
+      })
+    }else{
+      output$setSelectFile <- renderUI({
+        fileInput('fileTime', 'Select your file')
+      })
+      
+      output$setUploadButton <- renderUI({
+        actionButton("uploadTime", "Upload data")
+      })
+    }
+  })
+
+############## STADY STATES #######################
   # Upload button op Dataset tab
   observeEvent(input$upload, {
     source("app_observeUploadButton.R")
-    checkFile(input$file1$datapath, input$file1, session)
+    checkFile(input$file1$datapath, input$file1, session, output)
   })
   
   # Plot  button op Settings tab
@@ -55,6 +98,7 @@ myServer <- function(input, output, session) {
           })
         }
       }else{
+        
         # Controleren of het bestand waardes in de kolom Type heeft.
         checkType <- (which(data == "Type", arr.ind = TRUE))
         if(data[2,checkType[1,2]] == "Sample"){
@@ -65,7 +109,7 @@ myServer <- function(input, output, session) {
         
         # Ophalen van de geselecteerde data.
         source("switchTrue.R")
-        selected_matrix <- setSelectedMatrix(specific_data, input$MolCheckBox, input$SamCheckBox, input$abs_norm, input$av_ind, type)
+        selected_matrix <<- setSelectedMatrix(specific_data, input$MolCheckBox, input$SamCheckBox, input$abs_norm, input$av_ind, type)
         
         if(input$av_ind == "av"){
           # Format voor de te visualiseren datatabel maken.
@@ -80,17 +124,18 @@ myServer <- function(input, output, session) {
             selected_matrix
           })
         }
-
-        }
+      }
     }
-
+    
     if(input$ShowSingleMolecule == FALSE){
       source("Visualization.R")
       p <- setOnePlot(selected_matrix, input$av_ind)
       
     }else{
+      yscl <- input$scale_y_axis
       source("Visualization.R")
-      p <- setMultiplePlots(selected_matrix, input$av_ind)
+      p <- setMultiplePlots(selected_matrix, input$av_ind, yscl)
+      
     }
    
     ranges <- reactiveValues(x = NULL, y = NULL)
@@ -99,15 +144,7 @@ myServer <- function(input, output, session) {
     output$Graphic <- renderPlot(height="auto", {
       
       # Het openen van het menu waar meer instellingen staan (titel en subtitel)
-      observeEvent(input$showSettings, {
-        if((input$showSettings %% 2) == 0){
-          source("app_TitleSettings.R")
-          hideSettings(output)
-          
-        
-        }else{
-          source("app_TitleSettings.R")
-          showSettings(output)
+      observeEvent(input$SubmitTitles, {
           
           # Zorgen dat de titel gealigned wordt op basis van welke button ze klikken (links: 0, center: 0.5). 
           alignValueTitle <- reactiveValues(click = NULL)
@@ -137,7 +174,6 @@ myServer <- function(input, output, session) {
             plotInput()
             
           })
-        }
       })
       p + coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
     })
@@ -166,10 +202,9 @@ myServer <- function(input, output, session) {
           theme(plot.title = element_text(size = input$numT, hjust = titleAlign, face = typeTitle)) +
           theme(plot.subtitle = element_text(size = input$numS, hjust = subtitleAlign, face = typeSubtitle)) +
           coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE) 
-        
       }
   })
-
+  
   # Download button op Results tab waarbij er een keuze gemaakt moet worden tussen 72 of 300 dpi
   observeEvent(input$download, {
     showModal(modalDialog(
@@ -199,5 +234,15 @@ myServer <- function(input, output, session) {
   # Cancel button in de popup voor de keuze voor 72 of 300 dpi
   observeEvent(input$cancel, {
     removeModal()
+  })
+
+########### TIME PLOTS ##################
+  observeEvent(input$uploadTime,{
+    source("OpenFile.R")
+    Resp_matrix <- openTimeFile(input$fileTime$datapath)
+    updateTabsetPanel(session = session, inputId = "tabs", selected = "Settings")
+    
+    source("app_observeUploadButton.R")
+    setMoleculesSamples(Resp_matrix, output)
   })
 }

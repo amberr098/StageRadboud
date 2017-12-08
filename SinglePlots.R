@@ -3,7 +3,7 @@
 
 # Deze functie wordt geactiveerd wanneer de average optie wordt gekozen ipv individual
 # De gewenste structuur van de dataframe voor de plot wordt hier gemaakt.
-getPlotAverage <- function(av_matrix, sd_matrix){
+getPlotAverage <- function(av_matrix, sd_matrix, yscl){
   allComb_mat <- matrix(NA, ncol = 4, nrow = ncol(av_matrix)*nrow(av_matrix))
   colnames(allComb_mat) <- c("Molecules", "Samples", "Average", "SD")
   count <- 0
@@ -24,44 +24,35 @@ getPlotAverage <- function(av_matrix, sd_matrix){
     }
   }
   allComb_DatF <- as.data.frame(allComb_mat, stringsAsFactors=FALSE)
-  p <- setPlotAverage(allComb_DatF)
+  p <- setPlotAverage(allComb_DatF, yscl)
   return(p)
 }
 
 # Wordt aangeroepen in de getPlotAverage functie en plot de data.
-setPlotAverage <- function(allComb_DatF){
+setPlotAverage <- function(allComb_DatF, yscl){
   library(scales)
+  allComb_DatF <- allComb_DatF[order(allComb_DatF$Molecules),]
   
   sd <- as.numeric(allComb_DatF$SD)
   half_sd <- as.numeric(as.character(sd))/2
-
+  
   # De kolommen 3 en 4 numeric maken (Average en SD kolom)
   allComb_DatF[3] <- lapply(allComb_DatF[3], function(x) as.numeric(as.character(x)))
   allComb_DatF[4] <- lapply(allComb_DatF[4], function(x) as.numeric(as.character(x)))
-  
-  # De hoogte van de plots bepalen
-  max_y <- max(allComb_DatF$Average + sd)*0.15 + max(allComb_DatF$Average + sd)
-  min_y <- min(allComb_DatF$Average - sd)*0.15 + min(allComb_DatF$Average - sd)
-  
-  if(min_y > 0){
-    min_y <- 0
-  }
-  
+  print(allComb_DatF$Average + allComb_DatF$SD)
   p <- ggplot(allComb_DatF, aes(x = Samples, y = Average, fill = Samples, ymin = Average-half_sd, ymax = Average+half_sd))+
     geom_bar(stat = "identity", position = position_dodge()) +
-    facet_wrap(~Molecules)+
+    facet_wrap(~Molecules, scales = yscl)+
     geom_errorbar(width = 0.1) +
-    scale_y_continuous(labels = comma, limits = c(min_y, max_y))+
+    scale_y_continuous(labels = comma)+
     theme(axis.title.x = element_blank(),
           axis.text.x = element_blank(),
           axis.ticks.x = element_blank())
-  
-  return(p)
 }
 
 # Deze functie wordt geactiveerd wanneer de individual optie wordt gekozen ipv average
 # De gewenste structuur van de dataframe voor de plot wordt hier gemaakt.
-getPlotIndividual <- function(selected_matrix){
+getPlotIndividual <- function(selected_matrix, yscl){
   allComb_m <- matrix(NA, ncol = 3, nrow = ncol(selected_matrix)*nrow(selected_matrix))
   colnames(allComb_m) <- c("Molecules", "Samples", "Values")
 
@@ -79,14 +70,14 @@ getPlotIndividual <- function(selected_matrix){
     }
   }
   allComb_DF <- as.data.frame(allComb_m,stringsAsFactors=FALSE)
-  p <- setPlotIndividual(allComb_DF)
+  p <- setPlotIndividual(allComb_DF, yscl)
   return(p)
 }
 
 # Wordt aangeroepen in getPlotIndividual en plot de data.
-setPlotIndividual <- function(allComb_DF){
+setPlotIndividual <- function(allComb_DF, yscl){
   library(scales)
-
+  allComb_DF <- allComb_DF[order(allComb_DF$Molecules),]
   # De kolom 3 numeric maken (Value kolom)
   allComb_DF[3] <- lapply(allComb_DF[3], function(x) as.numeric(as.character(x)))
 
@@ -100,8 +91,8 @@ setPlotIndividual <- function(allComb_DF){
   
   p <- ggplot(allComb_DF, aes(x = Samples, y = Values, fill = Samples, group = factor(Values)))+
     geom_bar(position = position_dodge(), stat = "identity", colour="white", size = 0.5, width = 0.5) +
-    facet_wrap(~Molecules) +
-    scale_y_continuous(limits = c(min_y, max_y), labels = comma) +
+    facet_wrap(~Molecules, scales = yscl) +
+    scale_y_continuous(labels = comma) +
     theme(axis.title.x = element_blank(),
           axis.text.x = element_blank(),
           axis.ticks.x = element_blank())

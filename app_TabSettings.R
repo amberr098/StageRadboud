@@ -1,4 +1,5 @@
 # Deze tab bevat de opties voor de gebruiker voor de uiteindelijke visualisatie. 
+# De uiOutputs worden toegevoegd in het bestand SetSettings.R 
 tabSettings <- tabPanel("Settings",icon = icon("gear"),
                         tabsetPanel(type= "tabs",
                                     
@@ -6,50 +7,22 @@ tabSettings <- tabPanel("Settings",icon = icon("gear"),
                                     tabPanel("Settings plot",
                                              div(style = "margin-top: 20px;",
                                                  fluidRow(
-                                                   column(4, pickerInput(
-                                                     inputId = "abs_norm", 
-                                                     label = "Absolute/normalized counts",
-                                                     choices = list("Absolute counts" = "abs", "Normalized counts" = "norm"),
-                                                     selected = "abs",
-                                                     multiple = FALSE
-                                                     ),
+                                                   column(4, uiOutput("abs_norm_option"),
                                                      
-                                                     pickerInput(
-                                                       inputId = "av_ind", 
-                                                       label = "Average count/individual samples", 
-                                                       choices = list("Average counts" = "av", "Individual samples" = "ind"), 
-                                                       multiple = FALSE
-                                                       )),
-                                                   
-                                                   column(4, pickerInput(
-                                                     inputId = "MolCheckBox", 
-                                                     label = "Select molecule(s)", 
-                                                     choices = c(), options = list('actions-box' = TRUE), 
-                                                     multiple = TRUE
-                                                     ),
+                                                     uiOutput("av_ind_option"),
                                                      
-                                                     materialSwitch(
-                                                       inputId = "ShowSingleMolecule",
-                                                       label = "Show molecules seperated",
-                                                       value = FALSE,
-                                                       right = TRUE,
-                                                       status = "succes")),
+                                                     uiOutput("set_y_axis_scale")),
                                                    
-                                                   column(4, pickerInput(
-                                                     inputId = "SamCheckBox", 
-                                                     label = "Select sample(s)",
-                                                     choices = c(), options = list('actions-box' = TRUE), 
-                                                     multiple = TRUE
-                                                     ))
+                                                   column(4, uiOutput("select_molecules_option"),
+                                                     
+                                                     uiOutput("switchShowSeperate")),
+                                                   
+                                                   column(4, uiOutput("select_samples_option"))
                                                    )
                                                  )
                                              ),
                                     
                                     # Plot button
                                     div(style = "position:absolute;right:2em;",
-                                        actionButton(inputId = "plot", 
-                                                     label = "plot", 
-                                                     icon = icon("bar-chart-o"),
-                                                     width = 100
-                                                     ))
+                                        uiOutput("plot_Button"))
                                     ))

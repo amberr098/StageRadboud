@@ -24,16 +24,16 @@ setOnePlot <- function(plotMatrix, table_type){
   }
 }
 
-setMultiplePlots <- function(selected_matrix, avind){
+setMultiplePlots <- function(selected_matrix, avind, yscl){
   
   if(avind == "av"){
     source("SinglePlots.R")
-    p <- getPlotAverage(selected_matrix$average, selected_matrix$standDev)
+    p <- getPlotAverage(selected_matrix$average, selected_matrix$standDev, yscl)
     return(p)
   }
   else if(avind == "ind"){
     source("SinglePlots.R")
-    p <- getPlotIndividual(selected_matrix)
+    p <- getPlotIndividual(selected_matrix, yscl)
     return(p)
   }
 }

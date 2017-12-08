@@ -1,4 +1,4 @@
-open <- function(path, separator){
+openStStFile <- function(path, separator){
 
   # Op basis van de keuze van de gebruiker een .csv file openen.
   if(!is.null(separator)){
@@ -9,4 +9,14 @@ open <- function(path, separator){
   }
   
   return(data)
+}
+
+openTimeFile <- function(path){
+  # Ophalen van het bestand.
+  dataTime <<- readxl::read_xlsx(path)
+  
+  source("EditFile.R")
+  Resp_matrix <- getRespColumns(dataTime)
+  
+  return(Resp_matrix)
 }
