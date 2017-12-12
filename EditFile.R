@@ -64,37 +64,32 @@ getRespColumns <- function(dataTime){
   # Kolomnamen die niet nodig zijn. 
   removeCols <- grep("X__.*", colnames(dataTime))
   
-  
   allCols <- c(NonColNames)
   # Ophalen van de kolomnamen. Worden alleen toegevoegd als de index van de kolom niet voorkomt in removeCols
   for(index_col in 1:length(colnames(dataTime))){
     if(!index_col %in% removeCols){
       cname <- colnames(dataTime)[index_col]
-      if(!cname == "Sample"){
+      if(!cname == "Sample" && !cname == ""){
         allCols <- c(allCols, cname)
       }
     }
   }
   
-  ######## Alle Resp. kolommen in een data.frame zetten.
-  
   # Matrix met de rij index en kolom index voor de Resp. kolommen
   allRespCol_m <-which(dataTime == "Resp.", arr.ind = TRUE)
   
   # Alle kolommen die moeten blijven 
-  allRespCol <- c(1:(firstCol-1), allRespCol_m[,2] )
-  
-  Resp_matrix <- matrix(NA)
-  
-  # De kolommen ophalen in de totale data en toevoegen aan een nieuwe matrix
-  for(ind in allRespCol){
-    Resp_matrix <- cbind(Resp_matrix, dataTime[,ind])
+  allRespCol <- c(1:(firstCol-1), allRespCol_m[,2])
+  temp_Resp_dataframe <- list()
+  count <- 0
+  for(index in allRespCol){
+    count <- count + 1
+    temp_Resp_dataframe[[count]] <- dataTime[,index]
   }
   
-  # Verwijderen van een NA kolom die toe wordt gevoegd wanneer cbind gedaan word
-  Resp_matrix <- Resp_matrix[,-1]
-  colnames(Resp_matrix) <- allCols
+  Resp_dataframe <- data.frame(temp_Resp_dataframe)
+  colnames(Resp_dataframe) <- allCols
   
-  return(Resp_matrix)
-}
+  return(Resp_dataframe)
+  }
   

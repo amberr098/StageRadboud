@@ -91,5 +91,36 @@ setMoleculesSamples <- function(Resp_matrix, output){
   # Sample lijst ophalen.
   col_mat_name <- which(Resp_matrix == "Name", arr.ind = TRUE)
   col_ind_name <- col_mat_name[1,2]
-  print(Resp_matrix[,col_ind_name])
+}
+
+# Wordt aangeroepen wanneer er gekozen wordt voor een time plot
+checkFileTime <- function(datapath, file, session, output){
+  req(file)
+  pattern <- "*\\.csv"
+  
+  # Controleren of het ingeladen bestand een .csv bestand is
+  if(grepl(pattern, datapath) == TRUE){
+    csvFile <- TRUE
+    first_line <- readLines(datapath, n=1)
+    
+    # Checken welke seperator het bestand heeft
+    if(grepl(";", first_line)){
+      sep <- ";"
+    }else if(grepl(",", first_line)){
+      sep <- ","
+    }else if(grepl("\t", first_line)){
+      sep <- "\t"
+    }else{
+      invisble("X")
+    }
+  }else{
+    csvFile <- FALSE
+  }
+  
+  if(csvFile == TRUE){
+    source("OpenFile.R")
+    Resp_dataframe <- openTimeFile(datapath, sep)
+    return(Resp_dataframe)
+  }
+  
 }

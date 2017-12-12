@@ -5,7 +5,7 @@ subtitleAlign <- NULL
 myServer <- function(input, output, session) {
   observeEvent(input$SubmitTypeOfPlot,{
     plotType <- input$typeOfPlot
-    
+
     if(plotType == "Stady state"){
       
       output$setSelectFile <- renderUI({
@@ -238,11 +238,45 @@ myServer <- function(input, output, session) {
 
 ########### TIME PLOTS ##################
   observeEvent(input$uploadTime,{
-    source("OpenFile.R")
-    Resp_matrix <- openTimeFile(input$fileTime$datapath)
-    updateTabsetPanel(session = session, inputId = "tabs", selected = "Settings")
-    
     source("app_observeUploadButton.R")
-    setMoleculesSamples(Resp_matrix, output)
+    Resp_dataframe <<- checkFileTime(input$fileTime$datapath, input$fileTime, session, output)
+    
+    # Alle gemiddelde voor een sample krijgen 
+    source("TimeAverageMatrix.R")
+    average_df <<- getAverageData(Resp_dataframe)
+    
+    # Toevoegen van de opties voor de gebruiker.
+    output$abs_norm_option <- renderUI({
+      pickerInput(
+        inputId = "abs_norm", 
+        label = "Absolute/normalized counts",
+        choices = list("Absolute counts" = "abs", "Normalized counts" = "norm"),
+        selected = "abs",
+        multiple = FALSE
+      )
+    })
+    updateTabsetPanel(session = session, inputId = "tabs", selected = "Settings")
+  })
+  
+  # Als er gekozen wordt voor de optie genormaliseerde waarden, dan moet er bepaald wordne
+  # hoe er genormaliseerd wordt: C13/C12 of C13/totaal C13 C12
+  observeEvent(input$abs_norm, {
+    if(input$abs_norm == "norm"){
+      output$switchNormalisation <- renderUI({
+        materialSwitch(inputId = "switch_norm",
+                       label = "13C divided by total",
+                       status = "success")
+      })
+    }else{
+      output$switchNormalisation <- renderUI({
+        NULL
+      })
+    }
+  })
+  
+  
+  observeEvent(input$switch_norm, {
+    source("Normalization.R")
+    normalisation_C13C12(average_df, input$switch_norm)
   })
 }

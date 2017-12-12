@@ -32,15 +32,14 @@ getPlotAverage <- function(av_matrix, sd_matrix, yscl){
 setPlotAverage <- function(allComb_DatF, yscl){
   library(scales)
   allComb_DatF <- allComb_DatF[order(allComb_DatF$Molecules),]
-  
-  sd <- as.numeric(allComb_DatF$SD)
-  half_sd <- as.numeric(as.character(sd))/2
-  
+  # Toevoegen van de helft van de SD aan de dataframe.
+  allComb_DatF["Half"] <- as.numeric(as.character(allComb_DatF$SD))/2
+
   # De kolommen 3 en 4 numeric maken (Average en SD kolom)
   allComb_DatF[3] <- lapply(allComb_DatF[3], function(x) as.numeric(as.character(x)))
   allComb_DatF[4] <- lapply(allComb_DatF[4], function(x) as.numeric(as.character(x)))
-  print(allComb_DatF$Average + allComb_DatF$SD)
-  p <- ggplot(allComb_DatF, aes(x = Samples, y = Average, fill = Samples, ymin = Average-half_sd, ymax = Average+half_sd))+
+
+  p <- ggplot(allComb_DatF, aes(x = Samples, y = Average, fill = Samples, ymin = Average-Half, ymax = Average+Half))+
     geom_bar(stat = "identity", position = position_dodge()) +
     facet_wrap(~Molecules, scales = yscl)+
     geom_errorbar(width = 0.1) +

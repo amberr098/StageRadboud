@@ -11,12 +11,12 @@ openStStFile <- function(path, separator){
   return(data)
 }
 
-openTimeFile <- function(path){
+openTimeFile <- function(path, separator){
   # Ophalen van het bestand.
-  dataTime <<- readxl::read_xlsx(path)
+  dataTime <- read.csv(path, sep = separator, check.names = FALSE)
   
   source("EditFile.R")
-  Resp_matrix <- getRespColumns(dataTime)
-  
-  return(Resp_matrix)
+  Resp_dataframe <- getRespColumns(dataTime)
+
+  return(Resp_dataframe)
 }
