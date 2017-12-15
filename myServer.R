@@ -241,11 +241,9 @@ myServer <- function(input, output, session) {
     source("app_observeUploadButton.R")
     Resp_dataframe <<- checkFileTime(input$fileTime$datapath, input$fileTime, session, output)
     
-    # Alle gemiddelde voor een sample krijgen 
-    source("TimeAverageMatrix.R")
-    average_df <<- getAverageData(Resp_dataframe)
+
     
-    # Toevoegen van de opties voor de gebruiker.
+    # Toevoegen van de opties voor de gebruiker: absolute waarden/genormaliseerde waarden.
     output$abs_norm_option <- renderUI({
       pickerInput(
         inputId = "abs_norm", 
@@ -255,8 +253,28 @@ myServer <- function(input, output, session) {
         multiple = FALSE
       )
     })
+    source("TimeOptions.R")
+    sample_list <- getSamples(Resp_dataframe)
+    
+    # Toevoegen van de optie om een sample te kiezen
+    output$select_samples_option <- renderUI({
+      pickerInput(inputId = "sampleChoices",
+                  label = "Select sample(s)",
+                  choices = c(sample_list), 
+                  options = list('actions-box' = TRUE),
+                  multiple = TRUE)
+    })
+    
+    # Toevoegen van de plot button
+    output$plot_Button <- renderUI({
+      actionButton(inputId = "plotButton",
+                   label = "Plot")
+    })
+    
     updateTabsetPanel(session = session, inputId = "tabs", selected = "Settings")
   })
+  
+
   
   # Als er gekozen wordt voor de optie genormaliseerde waarden, dan moet er bepaald wordne
   # hoe er genormaliseerd wordt: C13/C12 of C13/totaal C13 C12
@@ -267,16 +285,76 @@ myServer <- function(input, output, session) {
                        label = "13C divided by total",
                        status = "success")
       })
+      
+      output$select_columns_to_show <- renderUI({
+        NULL
+      })
+      
+      source("TimeOptions.R")
+      molecule_list <- getMolecules_Norm(Resp_dataframe)
+      
+      # Toevoegen van de optie om een molecuul te kiezen
+      output$select_molecules_option <- renderUI({
+        pickerInput(inputId = "moleculeChoices",
+                    label = "Select molecule(s)",
+                    choices = c(molecule_list), 
+                    options = list('actions-box' = TRUE),
+                    multiple = TRUE)
+      })
+      
     }else{
       output$switchNormalisation <- renderUI({
         NULL
       })
+      
+      output$select_columns_to_show <- renderUI({
+        pickerInput(inputId = "C12C13_columns",
+                    label = "Select column(s)",
+                    choices = c("C13 column" = "C13", "C12 column" = "C12"), 
+                    options = list('actions-box' = TRUE),
+                    multiple = TRUE)
+      })
+      
+      source("TimeOptions.R")
+      molecule_list <- getMolecules(Resp_dataframe)
+      
+      
+      # Toevoegen van de optie om een molecuul te kiezen
+      output$select_molecules_option <- renderUI({
+        pickerInput(inputId = "moleculeChoices",
+                    label = "Select molecule(s)",
+                    choices = c(molecule_list), 
+                    options = list('actions-box' = TRUE),
+                    multiple = TRUE)
+      })
+      
+      # Alle gemiddelde voor een sample krijgen voor de optie Absolute
+      source("TimeAverageMatrix.R")
+      average_df <<- getAverageData(Resp_dataframe)
+      standev_df <<- getStandevData(Resp_dataframe)
     }
   })
   
   
   observeEvent(input$switch_norm, {
-    source("Normalization.R")
-    normalisation_C13C12(average_df, input$switch_norm)
+    source("NormalisationTime.R")
+    # Als de input TRUE geeft, is de normalisatie 13C/totaal. Anders is het 13C/12C
+    if(input$switch_norm == FALSE){
+      norm_matrix <- C13_dividedBy_C12(Resp_dataframe)
+      average_df <<- getAverageC13C12(norm_matrix)
+      standev_df <<- getStanDevC13C12(norm_matrix)
+
+    }else{
+      norm_values_matrix <- C13_dividedBy_total(Resp_dataframe)
+      average_df <<- getAverageC13Total(norm_values_matrix)
+      standev_df <<- getStanDevC13Total(norm_values_matrix)
+    }
   })
+  
+  observeEvent(input$plotButton, {
+    source("TimeSelectedDF.R")
+    selected_dataframe <<- getSelectedDataframe(input$sampleChoices, input$moleculeChoices, average_df, standev_df)
+    colnames(selected_dataframe) <- c("Sample", "Time", "Molecule", "Variant", "Average", "SD", "Half SD")
+  })
+  
 }

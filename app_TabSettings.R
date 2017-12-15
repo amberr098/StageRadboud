@@ -13,7 +13,10 @@ tabSettings <- tabPanel("Settings",icon = icon("gear"),
                                                      
                                                      uiOutput("set_y_axis_scale"),
                                                      
-                                                     uiOutput("switchNormalisation")),
+                                                     uiOutput("switchNormalisation"),
+                                                     
+                                                     uiOutput("select_columns_to_show")
+                                                     ),
                                                    
                                                    column(4, uiOutput("select_molecules_option"),
                                                      

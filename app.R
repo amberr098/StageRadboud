@@ -7,3 +7,4 @@ source("myServer.R")
 
 # Run the application
 shinyApp(ui = myUI, server = myServer)
+
