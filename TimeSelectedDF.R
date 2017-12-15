@@ -19,8 +19,7 @@ getSelectedDataframe <- function(samples, molecules, average_df, standev_df){
         average <- average_df[row,col_ind]
         sd <- standev_df[row, col_ind]
         half_sd <- as.numeric(sd)/2
-        print(paste("average", average))
-        print(paste("sd", sd))
+
         # Het splitsen van het molecuul en de variant: 13C6-CMP-Neu5Gc in molecuul: CMP-neu5Gc, variant: 13C6
         if(grepl(pattern,mol) == TRUE){
           C13_variant_temp <- regmatches(mol, regexpr(pattern, mol))

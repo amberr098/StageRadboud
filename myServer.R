@@ -307,14 +307,6 @@ myServer <- function(input, output, session) {
         NULL
       })
       
-      output$select_columns_to_show <- renderUI({
-        pickerInput(inputId = "C12C13_columns",
-                    label = "Select column(s)",
-                    choices = c("C13 column" = "C13", "C12 column" = "C12"), 
-                    options = list('actions-box' = TRUE),
-                    multiple = TRUE)
-      })
-      
       source("TimeOptions.R")
       molecule_list <- getMolecules(Resp_dataframe)
       
@@ -354,7 +346,14 @@ myServer <- function(input, output, session) {
   observeEvent(input$plotButton, {
     source("TimeSelectedDF.R")
     selected_dataframe <<- getSelectedDataframe(input$sampleChoices, input$moleculeChoices, average_df, standev_df)
+    View(selected_dataframe)
     colnames(selected_dataframe) <- c("Sample", "Time", "Molecule", "Variant", "Average", "SD", "Half SD")
+    
+    output$Graphic <- renderPlot({
+      source("TimePlot.R")
+      getPlot(selected_dataframe)
+    })
+    updateTabsetPanel(session = session, inputId = "tabs", selected = "Results")
   })
   
 }
