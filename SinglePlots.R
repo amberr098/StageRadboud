@@ -89,7 +89,7 @@ setPlotIndividual <- function(allComb_DF, yscl){
   }
   
   p <- ggplot(allComb_DF, aes(x = Samples, y = Values, fill = Samples, group = factor(Values)))+
-    geom_bar(position = position_dodge(), stat = "identity", colour="white", size = 0.5, width = 0.5) +
+    geom_bar(position = position_dodge(), stat = "identity", colour="white", size = 0.1, width = 0.5) +
     facet_wrap(~Molecules, scales = yscl) +
     scale_y_continuous(labels = comma) +
     theme(axis.title.x = element_blank(),

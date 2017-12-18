@@ -246,7 +246,7 @@ myServer <- function(input, output, session) {
     # Toevoegen van de opties voor de gebruiker: absolute waarden/genormaliseerde waarden.
     output$abs_norm_option <- renderUI({
       pickerInput(
-        inputId = "abs_norm", 
+        inputId = "abs_norm_time", 
         label = "Absolute/normalized counts",
         choices = list("Absolute counts" = "abs", "Normalized counts" = "norm"),
         selected = "abs",
@@ -278,8 +278,8 @@ myServer <- function(input, output, session) {
   
   # Als er gekozen wordt voor de optie genormaliseerde waarden, dan moet er bepaald wordne
   # hoe er genormaliseerd wordt: C13/C12 of C13/totaal C13 C12
-  observeEvent(input$abs_norm, {
-    if(input$abs_norm == "norm"){
+  observeEvent(input$abs_norm_time, {
+    if(input$abs_norm_time == "norm"){
       output$switchNormalisation <- renderUI({
         materialSwitch(inputId = "switch_norm",
                        label = "13C divided by total",
