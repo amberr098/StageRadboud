@@ -13,8 +13,12 @@ tabResults <- tabPanel("Results", icon = icon("bar-chart-o"),
                                                              resetOnNew = TRUE),
                                                            width = "100%",
                                                            height = "500px"),
+                                          
+                                                
                                                 fluidRow(
-                                                  column(12, div(style = "position:absolute;right:1em;",
+                                                  column(6, uiOutput("black_white_option")),
+                                                  
+                                                  column(6, div(style = "position:absolute;right:1em;",
                                                                 actionButton(inputId = "download",
                                                                              label = "Download",
                                                                              icon = icon("download"))
@@ -25,111 +29,49 @@ tabResults <- tabPanel("Results", icon = icon("bar-chart-o"),
                                                   div(style = "margin-top: 40px; ",
                                                       fluidRow(
                                                         column(12, HTML('<hr style="color: grey;">'))
-                                                      ),
-                                                      
-                                                      fluidRow(
-                                                        div(style = "margin-left: 20px; ",
-                                                            column(6, h4("Title settings"))
                                                         ),
-                                                        column(5, h4("Subtitle settings"))
+                                                      fluidRow(
+                                                        column(6, h4("Title")),
+                                                        column(6, h4("Subtitle"))
                                                       ),
-                                                      
-                                                      column(4, textInput(inputId = "setTitle",
-                                                                          label = NULL,
-                                                                          placeholder = "Title...",
-                                                                          width = "600px"),
-                                                             
-                                                             fluidRow(
-                                                               column(4, actionBttn(inputId = "alignLeftTitle",
-                                                                                    label = NULL,
-                                                                                    icon = icon("align-left"),
-                                                                                    color = "succes",
-                                                                                    style = "stretch",
-                                                                                    block = TRUE)),
+                                                      fluidRow(
+                                                        column(3, textInput(inputId = "titleInput", label = NULL, width = "100%"),
+                                                               fluidRow(
+                                                                 column(6, actionBttn(inputId = "boldTitle", label = NULL, icon = icon("bold"), color = "succes", style = "bordered", block = TRUE, no_outline = FALSE, size = "sm")),
+                                                                 column(6, actionBttn(inputId = "italicTitle", label = NULL, icon = icon("italic"), color = "succes", style = "bordered", block = TRUE, no_outline = FALSE,size = "sm"))
+                                                               ),
+                                                               div(style = "margin-top: 20px; ",
+                                                                 fluidRow(
+                                                                   column(6, actionBttn(inputId = "leftTitle", label = NULL, icon = icon("align-left"), color = "succes", style = "bordered", block = TRUE, no_outline = FALSE, size = "sm")),
+                                                                   column(6, actionBttn(inputId = "centerTitle", label = NULL, icon = icon("align-center"), color = "succes", style = "bordered", block = TRUE, no_outline = FALSE, size = "sm"))
+                                                                 ))
+                                                               ),
+                                                        column(1, numericInput(inputId = "sizeTitle", label = NULL, value = 12)),
+                                                        
+                                                        column(3, textInput(inputId = "subtitleInput", label = NULL, width = "100%"), offset = 2,
+                                                               fluidRow(
+                                                                 column(6, actionBttn(inputId = "boldSubtitle", label = NULL, icon = icon("bold"),color = "succes", style = "bordered", block = TRUE, no_outline = FALSE, size = "sm")),
+                                                                 column(6, actionBttn(inputId = "italicSubtitle", label = NULL, icon = icon("italic"), color = "succes", style = "bordered", block = TRUE, no_outline = FALSE, size = "sm"))
+                                                               ),
                                                                
-                                                               column(4, actionBttn(inputId = "alignCenterTitle",
-                                                                                    label = NULL,
-                                                                                    icon = icon("align-center"),
-                                                                                    color = "succes",
-                                                                                    style = "stretch",
-                                                                                    block = TRUE), offset = 4)
-                                                             ), offset = 0,
-                                                             
-                                                             div(style = "margin-top: 20px; margin-bottom: 40px;",
+                                                               div(style = "margin-top: 20px; ",
                                                                  fluidRow(
-                                                                   column(4, actionBttn(inputId = "LTB", 
-                                                                                        label = NULL,
-                                                                                        icon = icon("bold"),
-                                                                                        color = "succes",
-                                                                                        style = "stretch",
-                                                                                        block = TRUE,
-                                                                                        no_outline = FALSE)),
-                                                                   
-                                                                   column(4, actionBttn(inputId = "LTI",
-                                                                                        label = NULL,
-                                                                                        icon = icon("italic"),
-                                                                                        color = "succes",
-                                                                                        style = "stretch",
-                                                                                        block = TRUE,
-                                                                                        no_outline = FALSE), offset = 4)
+                                                                   column(6, actionBttn(inputId = "leftSubtitle", label = NULL, icon = icon("align-left"), color = "succes", style = "bordered", block = TRUE, no_outline = FALSE, size = "sm")),
+                                                                   column(6, actionBttn(inputId = "centerSubtitle", label = NULL, icon = icon("align-center"), color = "succes", style = "bordered", block = TRUE, no_outline = FALSE, size = "sm"))
                                                                  ))
+                                                               ),
+                                                        column(1, numericInput(inputId = "sizeSubtitle", label = NULL, value = 9))
                                                       ),
-                                                      column(1, numericInput("numT", 
-                                                                             label = NULL, 
-                                                                             value = 12, 
-                                                                             width = "200px")
-                                                             , offset = 0),
                                                       
-                                                      column(4, textInput(inputId = "setSubtitle",
-                                                                          label = NULL,
-                                                                          placeholder = "Subtitle...",
-                                                                          width = "600px"), offset = 1,
-                                                             fluidRow(
-                                                               column(4, actionBttn(inputId = "alignLeftSubtitle",
-                                                                                    label = NULL,
-                                                                                    icon = icon("align-left"),
-                                                                                    color = "succes",
-                                                                                    style = "stretch",
-                                                                                    block = TRUE)),
-                                                               column(4, actionBttn(inputId = "alignCenterSubtitle",
-                                                                                    label = NULL,
-                                                                                    icon = icon("align-center"),
-                                                                                    color = "succes",
-                                                                                    style = "stretch",
-                                                                                    block = TRUE), offset = 4)
-                                                             ),
-                                                             div(style = "margin-top: 20px; margin-bottom: 40px;",
-                                                                 fluidRow(
-                                                                   column(4, actionBttn(inputId = "LTBS",
-                                                                                        label = NULL,
-                                                                                        icon = icon("bold"),
-                                                                                        color = "succes",
-                                                                                        style = "stretch",
-                                                                                        block = TRUE,
-                                                                                        no_outline = FALSE)),
-                                                                   column(4, actionBttn(inputId = "LTIS",
-                                                                                        label = NULL,
-                                                                                        icon = icon("italic"),
-                                                                                        color = "succes",
-                                                                                        style = "stretch",
-                                                                                        block = TRUE,
-                                                                                        no_outline = FALSE), offset = 4)
-                                                                 ))
-                                                      ),
-                                                      column(1, numericInput("numS", 
-                                                                             label = NULL, 
-                                                                             value = 9, 
-                                                                             width = "200px"), 
-                                                             offset = 0)
+                                                      div(style = "margin-top: 20px; margin-bottom: 20px; ",
+                                                        fluidRow(
+                                                          column(12, actionButton(inputId = "AddTitles", label = "Add"))
+                                                        )
+                                                      )
+                                                      )
                                                   )
-                                                  
-                                                ),
-                                                fluidRow(
-                                                  column(4, actionButton(inputId = "SubmitTitles",
-                                                                         label = "Add"))
                                                 )
-                                            )
-                                   ),
+                                            ),
                                    
                                    # In deze tab wordt de data van de geselecteerde samples en moleculen weergeven.
                                    tabPanel("Data",

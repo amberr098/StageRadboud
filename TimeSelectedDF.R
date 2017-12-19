@@ -38,3 +38,38 @@ getSelectedDataframe <- function(samples, molecules, average_df, standev_df){
   selected_dataframe <- as.data.frame(list_for_df)
   return(selected_dataframe)
 }
+
+getShowDataframe <- function(samples, molecules, average_df, standev_df){
+  list_for_df <- list()
+  
+  # Index van de kolomnaam ophalen op basis van het gekozen molecuul.
+  for(mol in molecules){
+    mol <- paste0(mol, " Results")
+    col <- which(colnames(average_df) == mol)
+    
+    # Indexen van de rijnamen ophalen op basis van het gekozen sample.
+    for(sam in samples){
+      sample_rows <- grep(sam, rownames(average_df))
+      for(row in sample_rows){
+        mol_name_temp <- colnames(average_df)[col]
+        mol_name <- gsub(" Results", "", mol_name_temp)
+        
+        sam_name_temp <- rownames(average_df)[row]
+        sam_name <- gsub("_", " ", sam_name_temp)
+        
+        average <- average_df[row,col]
+        sd <- standev_df[row,col]
+        
+        # Steeds een nieuwe rij toevoegen aan de lijst. 
+        new_row <- c(sam_name, mol_name, average, sd)
+        list_for_df <- rbind(list_for_df, new_row)
+      }
+    }
+  }
+  
+  # Dataframe maken van de lijst
+  showDataFrame <- as.data.frame(list_for_df)
+  colnames(showDataFrame) <- c("Samples", "Molecules", "Average", "SD")
+  
+  return(showDataFrame)
+}

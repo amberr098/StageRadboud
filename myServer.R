@@ -1,5 +1,7 @@
 data <- NULL
-titleAlign <- NULL 
+typeTitle <- NULL
+typeSubtitle <- NULL
+titleAlign <- NULL
 subtitleAlign <- NULL
 
 myServer <- function(input, output, session) {
@@ -50,6 +52,11 @@ myServer <- function(input, output, session) {
   observeEvent(input$upload, {
     source("app_observeUploadButton.R")
     checkFile(input$file1$datapath, input$file1, session, output)
+    
+    # Toevoegen van de optie om een zwart/witte grafiek te krijgen. Wordt toegevoegd aan de resultaten tab
+    output$black_white_option <- renderUI({
+      checkboxInput(inputId = "black_white", label = "Black/White")
+    })
   })
   
   # Plot  button op Settings tab
@@ -110,12 +117,10 @@ myServer <- function(input, output, session) {
         # Ophalen van de geselecteerde data.
         source("switchTrue.R")
         selected_matrix <<- setSelectedMatrix(specific_data, input$MolCheckBox, input$SamCheckBox, input$abs_norm, input$av_ind, type)
-        
         if(input$av_ind == "av"){
           # Format voor de te visualiseren datatabel maken.
           source("SinglePlots.R")
           showData <- getAverageData(selected_matrix)
-          
           output$dataTable <- renderDataTable({
             showData
           })
@@ -139,42 +144,9 @@ myServer <- function(input, output, session) {
     }
    
     ranges <- reactiveValues(x = NULL, y = NULL)
-    
+
     # De output wanneer er ingezoomed wordt. 
     output$Graphic <- renderPlot(height="auto", {
-      
-      # Het openen van het menu waar meer instellingen staan (titel en subtitel)
-      observeEvent(input$SubmitTitles, {
-          
-          # Zorgen dat de titel gealigned wordt op basis van welke button ze klikken (links: 0, center: 0.5). 
-          alignValueTitle <- reactiveValues(click = NULL)
-          
-          observeEvent(input$alignLeftTitle, {
-            alignValueTitle$click <- 0
-          })
-          
-          observeEvent(input$alignCenterTitle, {
-            alignValueTitle$click <- 0.5
-          })
-          
-          alignValueSubtitle <- reactiveValues(click = NULL)
-          
-          observeEvent(input$alignLeftSubtitle,{
-            alignValueSubtitle$click <- 0
-          })
-          
-          observeEvent(input$alignCenterSubtitle, {
-            alignValueSubtitle$click <- 0.5
-          })
-          
-          # toevoegen van titel en subtitel
-          output$Graphic <- renderPlot({
-            titleAlign <<- alignValueTitle$click
-            subtitleAlign <<- alignValueSubtitle$click
-            plotInput()
-            
-          })
-      })
       p + coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
     })
       
@@ -190,59 +162,91 @@ myServer <- function(input, output, session) {
         }
       })
       
-      # Barplot maken. Een globale functie maken van plotInput (<<-), plotInput wordt ook aangeroepen bij downloaden plot 
-      plotInput <<- function(){
-        source("app_BoldItalic.R")
-        typeTitle <- getTypeTitle(input$LTB, input$LTI)
-        typeSubtitle <- getTypeSubtitle(input$LTBS, input$LTIS)
-       
-        
-        p + ggtitle(input$setTitle) +
-          labs(subtitle = input$setSubtitle) +
-          theme(plot.title = element_text(size = input$numT, hjust = titleAlign, face = typeTitle)) +
-          theme(plot.subtitle = element_text(size = input$numS, hjust = subtitleAlign, face = typeSubtitle)) +
-          coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE) 
-      }
-  })
-  
-  # Download button op Results tab waarbij er een keuze gemaakt moet worden tussen 72 of 300 dpi
-  observeEvent(input$download, {
-    showModal(modalDialog(
-      radioButtons(inputId = "resolution",
-                   label = "Resolution",
-                   choices = c("72 dpi" = 72, "300 dpi" = 300)), 
-      footer = tagList(
-        modalButton("Cancel"),
-        downloadButton("downloadPlot")
-      ),
       
-      easyClose = TRUE
-    )
-    )
+      alignValueTitle <- reactiveValues(click = NULL)
+      
+      observeEvent(input$leftTitle, {
+        alignValueTitle$click <- 0
+      })
+      
+      observeEvent(input$centerTitle, {
+        alignValueTitle$click <- 0.5
+      })
+      
+      alignValueSubtitle <- reactiveValues(click = NULL)
+      
+      observeEvent(input$leftSubtitle, {
+        alignValueSubtitle$click <- 0
+      })
+      
+      observeEvent(input$centerSubtitle, {
+        alignValueSubtitle$click <- 0.5
+      })
+      
+      observeEvent(input$AddTitles,{
+        source("TitleSettings.R")
+        typeTitle <<- getTypeTitle(input$boldTitle, input$italicTitle)
+        typeSubtitle <<- getTypeSubtitle(input$boldSubtitle, input$italicSubtitle)
+        
+        titleAlign <<- alignValueTitle$click
+        subtitleAlign <<- alignValueSubtitle$click
+        
+        output$Graphic <- renderPlot({
+          # Door de observeEvent van de black/white checkbox worden de titles ook op de zwart/witte plot geplaatst. 
+          observeEvent(input$black_white, {
+            if(input$black_white == TRUE){
+              output$Graphic <- renderPlot({
+                p + ggtitle(input$titleInput) +
+                  labs(subtitle = input$subtitleInput) +
+                  theme(plot.title = element_text(size = input$sizeTitle, hjust = titleAlign, face = typeTitle)) +
+                  theme(plot.subtitle = element_text(size = input$sizeSubtitle, hjust = subtitleAlign, face = typeSubtitle))+
+                coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE) +
+                scale_fill_grey()
+            })
+          }else{
+            output$Graphic <- renderPlot({
+              p + ggtitle(input$titleInput) +
+                labs(subtitle = input$subtitleInput) +
+                theme(plot.title = element_text(size = input$sizeTitle, hjust = titleAlign, face = typeTitle)) +
+                theme(plot.subtitle = element_text(size = input$sizeSubtitle, hjust = subtitleAlign, face = typeSubtitle))+
+                coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
+            })
+          }
+          })
+        })
+      })
+      
+      # Ook zwart en witte plot gemaakt wanneer er geen titel is toegevoegd, dus wanneer er niet op de "Add" button is geklikt.  
+      observeEvent(input$black_white, {
+        if(input$black_white == TRUE){
+          output$Graphic <- renderPlot({
+            p + ggtitle(input$titleInput) +
+              labs(subtitle = input$subtitleInput) +
+              theme(plot.title = element_text(size = input$sizeTitle, hjust = titleAlign, face = typeTitle)) +
+              theme(plot.subtitle = element_text(size = input$sizeSubtitle, hjust = subtitleAlign, face = typeSubtitle))+
+              coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE) +
+              # Scale_fill_grey zorgt ervoor dat de plot zwart/wit wordt.
+              scale_fill_grey()
+          })
+        }else{
+          output$Graphic <- renderPlot({
+            p + ggtitle(input$titleInput) +
+              labs(subtitle = input$subtitleInput) +
+              theme(plot.title = element_text(size = input$sizeTitle, hjust = titleAlign, face = typeTitle)) +
+              theme(plot.subtitle = element_text(size = input$sizeSubtitle, hjust = subtitleAlign, face = typeSubtitle))+
+              coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
+          })
+        }
+      })
   })
   
-  # Downloaden van de plot nadat de keuze is gemaakt voor 72 of 300 dpi
-  output$downloadPlot <- downloadHandler(
-    filename = "ShinyPlot.png",
-    
-    content = function(file){
-      res <- as.numeric(input$resolution)
-      ggsave(file, plotInput(), dpi= res, height=7, width=15, units="in", device = "png", limitsize = FALSE)
-    }
-  )
-  
-  # Cancel button in de popup voor de keuze voor 72 of 300 dpi
-  observeEvent(input$cancel, {
-    removeModal()
-  })
+
 
 ########### TIME PLOTS ##################
   observeEvent(input$uploadTime,{
     source("app_observeUploadButton.R")
     Resp_dataframe <<- checkFileTime(input$fileTime$datapath, input$fileTime, session, output)
-    
-
-    
+   
     # Toevoegen van de opties voor de gebruiker: absolute waarden/genormaliseerde waarden.
     output$abs_norm_option <- renderUI({
       pickerInput(
@@ -346,14 +350,108 @@ myServer <- function(input, output, session) {
   observeEvent(input$plotButton, {
     source("TimeSelectedDF.R")
     selected_dataframe <<- getSelectedDataframe(input$sampleChoices, input$moleculeChoices, average_df, standev_df)
-    View(selected_dataframe)
     colnames(selected_dataframe) <- c("Sample", "Time", "Molecule", "Variant", "Average", "SD", "Half SD")
     
-    output$Graphic <- renderPlot({
-      source("TimePlot.R")
-      getPlot(selected_dataframe)
+    source("TimePlot.R")
+    p <- getPlot(selected_dataframe)
+    
+    source("TimeSelectedDF.R")
+    showDataFrame <- getShowDataframe(input$sampleChoices, input$moleculeChoices, average_df, standev_df)
+    
+    output$dataTable <- renderDataTable({
+      showDataFrame
     })
+    
     updateTabsetPanel(session = session, inputId = "tabs", selected = "Results")
+    
+    ranges <- reactiveValues(x = NULL, y = NULL)
+  
+    # De output wanneer er ingezoomed wordt. 
+    output$Graphic <- renderPlot(height="auto", {
+      p + coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
+    })
+    
+    # Wanneer er een vak word geselecteerd in de plot en er twee keer op geklikt wordt
+    observeEvent(input$plot1_dblclick, {
+      brush <- input$plot1_brush
+      if (!is.null(brush)) {
+        ranges$x <- c(brush$xmin, brush$xmax)
+        ranges$y <- c(brush$ymin, brush$ymax)
+      }else {
+        ranges$x <- NULL
+        ranges$y <- NULL
+      }
+    })
+    
+    alignValueTitle <- reactiveValues(click = NULL)
+
+    observeEvent(input$leftTitle, {
+      alignValueTitle$click <- 0
+    })
+
+    observeEvent(input$centerTitle, {
+      alignValueTitle$click <- 0.5
+    })
+
+    alignValueSubtitle <- reactiveValues(click = NULL)
+
+    observeEvent(input$leftSubtitle, {
+      alignValueSubtitle$click <- 0
+    })
+
+    observeEvent(input$centerSubtitle, {
+      alignValueSubtitle$click <- 0.5
+    })
+
+    observeEvent(input$AddTitles,{
+      source("TitleSettings.R")
+      typeTitle <- getTypeTitle(input$boldTitle, input$italicTitle)
+      typeSubtitle <- getTypeSubtitle(input$boldSubtitle, input$italicSubtitle)
+      
+      titleAlign <- alignValueTitle$click
+      subtitleAlign <- alignValueSubtitle$click
+      
+      output$Graphic <- renderPlot({
+        p + ggtitle(input$titleInput) +
+          labs(subtitle = input$subtitleInput) +
+          theme(plot.title = element_text(size = input$sizeTitle, hjust = titleAlign, face = typeTitle)) +
+          theme(plot.subtitle = element_text(size = input$sizeSubtitle, hjust = subtitleAlign, face = typeSubtitle))+
+          coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
+      })
+    })
   })
   
+  #### ALGEMEEN ####
+  # Download button op Results tab waarbij er een keuze gemaakt moet worden tussen 72 of 300 dpi
+  observeEvent(input$download, {
+    showModal(modalDialog(
+      radioButtons(inputId = "resolution",
+                   label = "Resolution",
+                   choices = c("72 dpi" = 72, "300 dpi" = 300)), 
+      footer = tagList(
+        modalButton("Cancel"),
+        downloadButton("downloadPlot")
+      ),
+      
+      easyClose = TRUE
+    )
+    )
+  })
+  
+  # Downloaden van de plot nadat de keuze is gemaakt voor 72 of 300 dpi
+  output$downloadPlot <- downloadHandler(
+    filename = "ShinyPlot.png",
+    
+    content = function(file){
+      res <- as.numeric(input$resolution)
+      ggsave(file, p, dpi= res, height=7, width=15, units="in", device = "png", limitsize = FALSE)
+    }
+  )
+  
+  # Cancel button in de popup voor de keuze voor 72 of 300 dpi
+  observeEvent(input$cancel, {
+    removeModal()
+  })
 }
+
+

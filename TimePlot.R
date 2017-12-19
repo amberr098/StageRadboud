@@ -1,6 +1,6 @@
 library(ggplot2)
 getPlot <- function(selected_dataframe){
-  View(selected_dataframe)
+
   colnames(selected_dataframe) <- c("Samples", "Time", "Molecule", "Variant", "Average", "SD", "Half SD")
   
   # De types meegeven van de gegevens in de tabel: as.numeric, as.character
@@ -11,7 +11,7 @@ getPlot <- function(selected_dataframe){
                               Average = as.numeric(selected_dataframe$Average),
                               SD = as.numeric(selected_dataframe$SD),
                               Half_SD = as.numeric(selected_dataframe$`Half SD`))
-  View(selected_data)
+
   # Plot maken van de selected_data
   p <- ggplot(selected_data, aes(x = Time, 
                                  y = Average, 
@@ -22,7 +22,8 @@ getPlot <- function(selected_dataframe){
                                  ymax = Average+Half_SD))+
     geom_line()+
     geom_point()+
-    # geom_errorbar()+
-    facet_wrap(~Molecule)
-  print(p)
+    geom_errorbar()+
+    facet_wrap(~Molecule, scales = "free") 
+
+  return(p)
 }
