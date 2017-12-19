@@ -47,7 +47,7 @@ myServer <- function(input, output, session) {
     }
   })
 
-############## STADY STATES #######################
+#### STADY STATES ####
   # Upload button op Dataset tab
   observeEvent(input$upload, {
     source("app_observeUploadButton.R")
@@ -192,14 +192,19 @@ myServer <- function(input, output, session) {
         subtitleAlign <<- alignValueSubtitle$click
         
         output$Graphic <- renderPlot({
-          # Door de observeEvent van de black/white checkbox worden de titles ook op de zwart/witte plot geplaatst. 
-          observeEvent(input$black_white, {
-            if(input$black_white == TRUE){
-              output$Graphic <- renderPlot({
-                p + ggtitle(input$titleInput) +
-                  labs(subtitle = input$subtitleInput) +
-                  theme(plot.title = element_text(size = input$sizeTitle, hjust = titleAlign, face = typeTitle)) +
-                  theme(plot.subtitle = element_text(size = input$sizeSubtitle, hjust = subtitleAlign, face = typeSubtitle))+
+          plotInput()
+        })
+      })
+      
+      plotInput <<- function(){
+        # Door de observeEvent van de black/white checkbox worden de titles ook op de zwart/witte plot geplaatst. 
+        observeEvent(input$black_white, {
+          if(input$black_white == TRUE){
+            output$Graphic <- renderPlot({
+              p + ggtitle(input$titleInput) +
+                labs(subtitle = input$subtitleInput) +
+                theme(plot.title = element_text(size = input$sizeTitle, hjust = titleAlign, face = typeTitle)) +
+                theme(plot.subtitle = element_text(size = input$sizeSubtitle, hjust = subtitleAlign, face = typeSubtitle))+
                 coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE) +
                 scale_fill_grey()
             })
@@ -212,32 +217,11 @@ myServer <- function(input, output, session) {
                 coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
             })
           }
-          })
         })
-      })
+      }
       
-      # Ook zwart en witte plot gemaakt wanneer er geen titel is toegevoegd, dus wanneer er niet op de "Add" button is geklikt.  
-      observeEvent(input$black_white, {
-        if(input$black_white == TRUE){
-          output$Graphic <- renderPlot({
-            p + ggtitle(input$titleInput) +
-              labs(subtitle = input$subtitleInput) +
-              theme(plot.title = element_text(size = input$sizeTitle, hjust = titleAlign, face = typeTitle)) +
-              theme(plot.subtitle = element_text(size = input$sizeSubtitle, hjust = subtitleAlign, face = typeSubtitle))+
-              coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE) +
-              # Scale_fill_grey zorgt ervoor dat de plot zwart/wit wordt.
-              scale_fill_grey()
-          })
-        }else{
-          output$Graphic <- renderPlot({
-            p + ggtitle(input$titleInput) +
-              labs(subtitle = input$subtitleInput) +
-              theme(plot.title = element_text(size = input$sizeTitle, hjust = titleAlign, face = typeTitle)) +
-              theme(plot.subtitle = element_text(size = input$sizeSubtitle, hjust = subtitleAlign, face = typeSubtitle))+
-              coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
-          })
-        }
-      })
+      # Ook de plot maken wanneer er niet op de "Add" button geklikt wordt. 
+      plotInput()
   })
   
 
@@ -444,7 +428,7 @@ myServer <- function(input, output, session) {
     
     content = function(file){
       res <- as.numeric(input$resolution)
-      ggsave(file, p, dpi= res, height=7, width=15, units="in", device = "png", limitsize = FALSE)
+      ggsave(file, dpi= res, height=7, width=15, units="in", device = "png", limitsize = FALSE)
     }
   )
   
