@@ -1,6 +1,5 @@
 library(ggplot2)
 getPlot <- function(selected_dataframe){
-
   colnames(selected_dataframe) <- c("Samples", "Time", "Molecule", "Variant", "Average", "SD", "Half SD")
   
   # De types meegeven van de gegevens in de tabel: as.numeric, as.character

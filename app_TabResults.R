@@ -1,4 +1,6 @@
-# Deze tab is onderverdeeld in twee tabs: plot en data. Plot weergeeft de grafiek van de geselecteerde data en data weergeeft een tabel met de geselecteerde data.
+# Deze tab is onderverdeeld in twee tabs: plot en data. 
+# Plot weergeeft de grafiek van de geselecteerde data en 
+# data weergeeft een tabel met de geselecteerde data.
 tabResults <- tabPanel("Results", icon = icon("bar-chart-o"),
                        
                        tabsetPanel(type = "tabs", 
@@ -16,8 +18,10 @@ tabResults <- tabPanel("Results", icon = icon("bar-chart-o"),
                                           
                                                 
                                                 fluidRow(
+                                                  # Optie om te kiezen of de plot zwart/wit moet, deze keuze is alleen bij de stady state plot. 
                                                   column(6, uiOutput("black_white_option")),
                                                   
+                                                  # Een button om de grafiek te downloaden als .png bestand.
                                                   column(6, div(style = "position:absolute;right:1em;",
                                                                 actionButton(inputId = "download",
                                                                              label = "Download",
@@ -25,6 +29,8 @@ tabResults <- tabPanel("Results", icon = icon("bar-chart-o"),
                                                   ))
                                                 ),
                                                 
+                                                # De opties voor de titel en subtitel. Voor beide is het mogelijk om de tekst grootte te veranderen, 
+                                                # de tekst te alignen (links of midden) en de tekst dikt gedrukt en/of schuin gedrukt te maken.
                                                 fluidRow(
                                                   div(style = "margin-top: 40px; ",
                                                       fluidRow(

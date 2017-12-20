@@ -108,6 +108,8 @@ getAverageData <- function(selected_matrix){
   colnames(showData_matrix) <- c("Samples", "Molecules", "Average", "SD")
   countRows <- 0
   
+  # veranderen van de layout van de matrix zodat de geselecteerde data weergegeven
+  # kan worden in de datatabel.
   for(row in 1:nrow(av_mat)){
     sample <- rownames(av_mat)[row]
     for(col in 1:ncol(av_mat)){

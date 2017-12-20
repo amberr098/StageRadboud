@@ -1,17 +1,20 @@
 library(reshape2)
 library(ggplot2)
 
+# STEADY STATE: Wordt aangeroepen wanneer de switch voor de moleculen aparte visualiseren uit staat
+# en de keuze average is. 
 getMatrix <- function(plot_data, molecules, samples){
   pattern_Tag <- "_.*"
   selected_df <- data.frame()
-
+  
   av_matrix <- plot_data$average
   sd_matrix <- plot_data$standDev
 
-  # De keuzes die gemaakt worden zijn zonder _, dus _ wordt weggehaald in de rijnamen van de matrixen. 
+  # rijnamen van de av_matrix en sd_matrix veranderen in x_a naar x a (verwijderen van _)
   index <- 1
   for(name in rownames(av_matrix)){
     if(grepl(pattern_Tag, name) == TRUE){
+      # De keuzes die gemaakt worden zijn zonder _, dus _ wordt weggehaald in de rijnamen van de matrixen.
       tag <- gsub("_", "", name)
       rownames(av_matrix)[index] <- tag
       rownames(sd_matrix)[index] <- tag
@@ -24,14 +27,17 @@ getMatrix <- function(plot_data, molecules, samples){
   
   count <- 1
   for(sam in samples){
+    # ophalen van de index van het geselecteerde sample door de gebruiker
     row_av <- match(sam, rownames(av_matrix))
     row_sd <- match(sam, rownames(sd_matrix))
     
     for(mol in molecules){
+      # Ophalen van de index van het geselecteerde molecuul door de gebruiker
       mol_res <- paste(mol, "Results")
       col_av <- match(mol_res, colnames(av_matrix))
       col_sd <- match(mol_res, colnames(sd_matrix))
       
+      # Dataframe maken van de geselecteerde waarden.
       selected_df[count,1] <- sam
       selected_df[count,2] <- mol
       selected_df[count,3] <- av_matrix[row_av, col_av]
@@ -47,7 +53,9 @@ getMatrix <- function(plot_data, molecules, samples){
 
 
 plotBar <- function(both_df){
-  standDev <- both_df$SD/2 
+  standDev <- both_df$SD/2
+  
+  # Bepalen van de hoogte van de plot
   max_y <- max(both_df$Average + standDev)*0.15 + max(both_df$Average + standDev)
   min_y <- min(both_df$Average - standDev)*0.15 + min(both_df$Average - standDev)
 

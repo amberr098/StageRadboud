@@ -3,22 +3,23 @@ library(ggplot2)
 
 individualSamples <- function(plot_data, molecules, samples){
   Row_names <- c()
-
+  # Ophalen van de index van de kolommen Name en Type
   index_Name <- which(plot_data == "Name", arr.ind = TRUE)
   column_Name <- index_Name[1,2]
   index_Type <- which(plot_data == "Type", arr.ind = TRUE)
   column_Type <- index_Type[1,2]
   column_number <- NULL
   
+  # Rij namen ophalen, afhankelijk van de kolom Type.
   # if wordt geactiveerd wanneer er geen Types zijn ingevuld, dus alleen de tags er staan als keuze in de Webinterface. 
   if(plot_data[2,column_Type] == "Sample"){
     angle_plot <<- NULL
     column_number <- column_Name
-    for(samm in samples){
-      sam <- paste0("_", samm)
+    for(sam_temp in samples){
+      sam <- paste0("_", sam_temp)
       index_sam <- which(grepl(sam, plot_data[,column_Name]))
       for (index_row in index_sam) {
-        Row_names <- c(Row_names, samm)
+        Row_names <- c(Row_names, sam_temp)
       }
     }
 
@@ -38,8 +39,8 @@ individualSamples <- function(plot_data, molecules, samples){
   rownames(selected_matrix) <- Row_names
 
   # Als column number gelijk is aan 5 dan zijn er types ingevuld, wanneer column number gelijk is aan 3 zijn er geen types ingevuld. 
-  
   for(sam in samples){
+    # Index van de samples ophalen afhankelijk van de Type kolom
     if(column_number == 5){
       index_sam <- which(plot_data[,column_number] == sam)
       
@@ -47,11 +48,14 @@ individualSamples <- function(plot_data, molecules, samples){
       sam_ <- paste0("_",sam)
       index_sam <- which(grepl(sam_, plot_data[,column_Name]))
     }
+    
+    # Index van de moleculen ophalen
     for (mol in molecules) {
       count <- 0
       selected_mol <- paste(mol, "Results")
       index_mol <- match(selected_mol, colnames(plot_data))
-    
+      
+      # Waardes ophalen van de geselecteerde data van de gebruiker.
       for (index_row in index_sam) {
   
         value <- plot_data[index_row, index_mol]
@@ -72,6 +76,8 @@ individualSamples <- function(plot_data, molecules, samples){
 }
 
 plotGraph <- function(matrix){
+  # Elke rijnaam een unieke naam geven zodat er een dataframe van gemaakt kan worden
+  # (dataframe moet unieke rijnamen hebben). Dataframe is nodig voor een grouped barplot. 
   unique_names <- rownames(matrix)
 
   df <- as.data.frame(matrix)

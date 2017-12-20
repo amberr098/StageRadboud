@@ -1,7 +1,9 @@
 library(ggplot2)
 
+# Ophalen van de geselecteerde data 
 getSelectedMatrix <- function(plot_data, table_type, molecules, samples){
   if(table_type == "av"){
+    # Zowel het gemiddelde als de standaard deviatie worden toegevoegd aan het dataframe.
     source("AverageOption.R")
     both_df <- getMatrix(plot_data, molecules, samples)
     return(both_df)
@@ -13,6 +15,7 @@ getSelectedMatrix <- function(plot_data, table_type, molecules, samples){
 }
 
 setOnePlot <- function(plotMatrix, table_type){
+  # Plot ophalen wanneer de switch uit staat. 
   if(table_type == "av"){
     source("AverageOption.R")
     p <- plotBar(plotMatrix)
@@ -25,7 +28,7 @@ setOnePlot <- function(plotMatrix, table_type){
 }
 
 setMultiplePlots <- function(selected_matrix, avind, yscl){
-  
+  # Plot ophalen wanneer de switch aan staat. 
   if(avind == "av"){
     source("SinglePlots.R")
     p <- getPlotAverage(selected_matrix$average, selected_matrix$standDev, yscl)
@@ -38,6 +41,7 @@ setMultiplePlots <- function(selected_matrix, avind, yscl){
   }
 }
 
+# Ophalen van de data zoals het moet worden weergeven in de datatabel
 showDataTable <- function(dataTable){
   asColumn <- rownames(dataTable)
   # Wordt geen warning weergeven door suppressWarnings(). 
