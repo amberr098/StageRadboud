@@ -7,7 +7,7 @@ getTypeOfPlot <- function(input, output){
     
     # Als de keuze steady state is wordt er een browse menu en upload button toegevoegd.
     # aan het tabblad Settings worden de keuzes toegevoegd. 
-    if(plotType == "Stady state"){
+    if(plotType == "Steady state"){
       setSteadyStateOptions(input, output)
     }else{
       setTimeOptions(output)
@@ -92,5 +92,23 @@ setTimeOptions <- function(output){
   
   output$setUploadButton <- renderUI({
     actionButton("uploadTime", "Upload data")
+  })
+  
+  # Verwijderen van de optie om alle moleculen in een aparte grafiek te weergeven.
+  # Deze is alleen nodig bij de steady state plot.
+  output$switchShowSeperate <- renderUI({
+    NULL
+  })
+  
+  # Verwijderen van de optie voor de gebruiker om te kiezen voor gemiddelden waarde of individuele waarden
+  # Deze keuze is alleen van toepassing bij de steady state plot
+  output$av_ind_option <- renderUI({
+    NULL
+  })
+  
+  # Verwijderen van de keuze voor een vaste y-as schaal of verschillende
+  # Alleen van toepassing bij de steady state plot
+  output$set_y_axis_scale <- renderUI({
+    NULL
   })
 }

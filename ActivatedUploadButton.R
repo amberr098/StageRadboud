@@ -76,31 +76,6 @@ checkFileSteadyState <- function(datapath, file, session, output){
   }
 }
 
-setMoleculesSamples <- function(Resp_matrix, output){
-  # Molecuul lijst ophalen.
-  pattern_molecule <- "13C.*-"
-  # Start index voor de molecuulnamen
-  first_molecule_index <- grep(pattern_molecule, colnames(Resp_matrix))[1]
-  
-  # Eind index voor de molecuulnamen
-  length_colnames <- length(colnames(Resp_matrix)) 
-  all_molecules <- colnames(Resp_matrix)[first_molecule_index:length_colnames]
-  
-  # Toevoegen van de keuze voor molecuul in de webinterface
-  output$select_molecules_option <- renderUI({
-    pickerInput(
-      inputId = "MolCheckBox_time",
-      label = "Select molecule(s)",
-      choices = c(all_molecules), options = list('actions-box' = TRUE),
-      multiple = TRUE
-    )
-  })
-  
-  # Sample lijst ophalen.
-  col_mat_name <- which(Resp_matrix == "Name", arr.ind = TRUE)
-  col_ind_name <- col_mat_name[1,2]
-}
-
 # Wordt aangeroepen wanneer er gekozen wordt voor een time plot
 checkFileTime <- function(datapath, file, session, output){
   # Wanneer er op de upload button wordt geklikt, maar er geen file in ingevoerd. 

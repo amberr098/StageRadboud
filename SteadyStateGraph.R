@@ -7,13 +7,13 @@ setGraph <- function(input, output, selected_matrix){
   # Ophalen van de plot op basis van de switch: per molecuul 1 plot of alle moleculen in 1 plot.
   if(input$ShowSingleMolecule == FALSE){
     # Basis plot zonder de titel en subtitel erbij
-    source("Visualization.R")
+    source("SteadyStateVisualization.R")
     p <- setOnePlot(selected_matrix, input$av_ind)
     
   }else{
     # Basis plot zonder de titel en subtitel erbij
     yscl <- input$scale_y_axis
-    source("Visualization.R")
+    source("SteadyStateVisualization.R")
     p <- setMultiplePlots(selected_matrix, input$av_ind, yscl)
     
   }

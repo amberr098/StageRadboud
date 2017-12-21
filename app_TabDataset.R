@@ -8,7 +8,7 @@ tabDataset <- tabPanel("Dataset",
                        fluidRow(
                          column(4, radioButtons(inputId = "typeOfPlot",
                                                 label = "Select plot",
-                                                choices = c("Stady state", "Time plot"))),
+                                                choices = c("Steady state", "Time plot"))),
                          column(4, uiOutput("setSelectFile"))
                          ),
                        fluidRow(

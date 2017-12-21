@@ -6,13 +6,17 @@ myServer <- function(input, output, session) {
   getTypeOfPlot(input, output)
 
   #### STEADY STATES ####
-  source("SteadyState.R")
-  SteadyStateMain(input, output, session)
-
-  #### TIME PLOTS ####
-  source("Time.R")
-  timeMain(input, output, session)
+  observeEvent(input$upload, {
+    source("SteadyState.R")
+    SteadyStateMain(input, output, session)
+  })
   
+  #### TIME PLOTS ####
+  observeEvent(input$uploadTime, {
+    source("Time.R")
+    timeMain(input, output, session)
+  })
+
   #### DOWNLOAD BUTTON ####
   # Download button op Results tab waarbij er een keuze gemaakt moet worden tussen 72 of 300 dpi
   observeEvent(input$download, {
