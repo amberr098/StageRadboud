@@ -16,7 +16,7 @@ activatedPlotButton <- function(input, output, session){
   
   # Alleen de Resp. kolommen ophalen.
   source("EditFile.R")
-  data_NoRT <- setColumnNames(data)
+  data_NoRT <<- setColumnNames(data)
   
   # Alle data die hoort bij de gekozen opties door de gebruiker
   source("SteadyStateSpecificData.R")

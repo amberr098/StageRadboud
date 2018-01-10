@@ -1,5 +1,5 @@
 data <- NULL
-
+count_save_button <<- 0
 myServer <- function(input, output, session) {
   # Gebruiker maakt een keus tussen de steady state plot of de time plot. 
   source("ChoicePlot.R")
@@ -9,14 +9,24 @@ myServer <- function(input, output, session) {
   observeEvent(input$upload, {
     source("SteadyState.R")
     SteadyStateMain(input, output, session)
+    
+    #### PATHWAYS ####
+    source("PathwaySteadyState.R")
+    main(input$file1$datapath, input$file1, session, output, input)
   })
   
   #### TIME PLOTS ####
   observeEvent(input$uploadTime, {
     source("Time.R")
     timeMain(input, output, session)
+    
+    #### PATHWAYS ####
+    source("PathwayTime.R")
+    main(output, input, session)
   })
+  
 
+  
   #### DOWNLOAD BUTTON ####
   # Download button op Results tab waarbij er een keuze gemaakt moet worden tussen 72 of 300 dpi
   observeEvent(input$download, {

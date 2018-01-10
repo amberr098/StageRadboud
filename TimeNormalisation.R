@@ -69,8 +69,6 @@ C13_dividedBy_C12 <- function(Resp_dataframe){
   rownames(norm_matrix) <- rown
   
   return(norm_matrix)
-  
- 
 }
 
 # Het gemiddelde van duplicated samples berekenen
