@@ -56,6 +56,4 @@ timeMain <- function(input, output, session){
     }
     
   })
-  
-
 }

@@ -76,14 +76,51 @@ getConditions <- function(dataMatrix, choicesUser){
   
 }
 
-setConditionsTime <- function(ratios, output){
-  conditionChoicesUser <- unique(rownames(ratios))
-  
+setConditionsTime <- function(Resp_dataframe, output, input){
+  conditionChoicesUser <- getConditionsTime(Resp_dataframe)
+
   output$choiceCondition1 <- renderUI({
     pickerInput(inputId = "userCondition1", label = "First condition", choices = conditionChoicesUser, multiple = FALSE)
+  })
+  
+  output$choiceCondition2 <- renderUI({
+    pickerInput(inputId = "userCondition2", label = "Second condition", choices = conditionChoicesUser, multiple = FALSE)  
   })
   
   output$calculateFoldChange <- renderUI({
     actionButton(inputId = "calcFoldChange", label = "Calculate Fold Change")
   })
+  
+  observeEvent(input$calcFoldChange, {
+    if(input$userCondition1 == input$userCondition2){
+      showModal(modalDialog("Select two different conditions", easyClose = TRUE, 
+                            footer = tagList(
+                              modalButton("OK")
+                            )
+      )
+      )
+    }
+  })
+}
+
+getConditionsTime <- function(Resp_dataframe){
+  index_col_Name <- which(Resp_dataframe == "Name", arr.ind = T)[1,2]
+  
+  pattern_time <- "_\\d{1,2}[min|h|sec]"
+  allSamples <- c()
+  
+  # Ophalen van alle samples die in het bestand staan
+  for(name in Resp_dataframe[,index_col_Name]){
+    if(isTRUE(!name == "Name")){
+      if(grepl(pattern_time, name) == TRUE){
+        sample_time <- strsplit(name, "_")
+        sample <- unlist(sample_time)[1]
+        allSamples <- c(allSamples, sample)
+      }
+    }
+  }
+  
+  # Alleen de unieke samples overhouden voor de keuze voor de gebruiker
+  choicesSamples <- unique(allSamples)
+  return(choicesSamples)
 }

@@ -42,24 +42,3 @@ changeFormat <- function(norm_Responses){
   
   return(formatData)
 }
-
-# Voor de bestanden met tijd (12C en 13C data) worden alleen de samples gepakt waar ook de tijd bijstaat
-changeFormatTime <- function(average_df){
-  pattern_time <- "_\\d{1,2}[min|h|sec]"
-  preRatio <- list()
-  rown <- c()
-  # Controleren of _ en een tijd in de sample naam staat.
-  for(index_name in 1:nrow(average_df)){
-    name <- rownames(average_df)[index_name]
-    if(grepl(pattern_time, name) == TRUE){
-      new_row <- average_df[index_name,]
-      preRatio <- rbind(preRatio, new_row)
-      
-      rown <- c(rown, gsub(pattern_time, "", name))
-    }
-  }
-  
-  ratios <- as.matrix(preRatio)
-  rownames(ratios) <- rown
-  return(ratios)
-}

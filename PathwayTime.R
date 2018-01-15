@@ -1,48 +1,32 @@
 unsaved_compounds <- NULL
 
-main <- function(output, input, session){
-  # De switch waarbij de gebruiker een keuze heeft hoe de data genormaliseerd wordt
-  output$choiceNormalisation <- renderUI({
-    materialSwitch(inputId = "dividedTotal",
-                   label = "13C divided by total",
-                   status = "success")
-  })
-  
-  observeEvent(input$dividedTotal, {
-    # Als de switch "uit" staat dan worden de 13C kolommen gedeeld door de 12C kolommen
-    if(input$dividedTotal == FALSE){
-      source("TimeNormalisation.R")
-      norm_matrix <- C13_dividedBy_C12(Resp_dataframe)
-      average_df <- getAverageC13C12(norm_matrix)
-      
-      # Het format van de dataframe veranderen
-      source("PathwayChangeFormat.R")
-      ratios <<- changeFormatTime(average_df)
-      
-      # Plaatsen van de selectInput waarin de keuze staat voor een conditie 
-      source("PathwayConditions.R")
-      setConditionsTime(ratios, output)
-   
-    }else{
-      # Wanneer de switch "aan" staat worden de 13C kolommen gedeeld door het totaal van de 13C en 12C kolommen
-      source("TimeNormalisation.R")
-      norm_values_matrix <- C13_dividedBy_total(Resp_dataframe)
-      average_df <<- getAverageC13Total(norm_values_matrix)
-      
-      # Het format van de dataframe veranderen
-      source("PathwayChangeFormat.R")
-      ratios <<- changeFormatTime(average_df)
-      
-      # Plaatsen van de selectInput waarin de keuze staat voor een conditie
-      source("PathwayConditions.R")
-      setConditionsTime(ratios, output)
-    }
-  })
+main <- function(output, input, session, datapath, file){
+  source("ActivatedUploadButton.R")
+  Resp_dataframe <- checkFileTime(datapath, file, session, output)
+
+  # Plaatsen van de selectInput waarin de keuze staat voor een conditie
+  source("PathwayConditions.R")
+  setConditionsTime(Resp_dataframe, output, input)
 
   # Wordt geactiveerd wanneer er op de "Calculate fold change" button wordt geklikt
   observeEvent(input$calcFoldChange, {
-    source("PathwayTimeLog2.R")
-    log2 <- getCondition(input$userCondition1, ratios)
+    
+    # De data van de gekozen condities ophalen
+    source("PathwayConditionData.R")
+    dataConditionNumeric <- getDataConditions(input$userCondition1, input$userCondition2, Resp_dataframe)
+    
+    # ratio bepalen door de 13C kolommen te delen door de 12C kolommen.
+    source("PathwayFoldChange.R")
+    ratios <- getRatioTime(dataConditionNumeric)
+
+    # Gemiddelde van duplicaten nemen
+    source("TimeNormalisation.R")
+    average_df <- getAverageC13C12(ratios)
+
+    # Fold change berekenen en de log2 daarvan nemen. 
+    source("PathwayFoldChange.R")
+    log2 <- getFoldChangeTime(average_df)
+    
     # log2Dataframe aanmaken zodat deze gebruikt kan worden in de file PathwayKeggMaps.R
     log2Dataframe <<- log2
     

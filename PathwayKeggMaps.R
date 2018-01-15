@@ -79,6 +79,9 @@ placeMaps <- function(output, allOptions, session){
 # Maken van de pathway op basis van de keuze van de gebruiker
 makePathway <- function(input, newtable,output, state){
   observeEvent(input$sendMap, {
+    maxValue <- getMaxValue(newtable)
+    minValue <- getMinValue(newtable)
+    
     # Ophalen van de keuze van de gebruiker
     keggMap <- input$KEGGMAP
     patternMap <- "(map.*)"
@@ -96,7 +99,8 @@ makePathway <- function(input, newtable,output, state){
       ))
     }else{
      
-      pvout <- pathview(cpd.data = newtable, pathway.id = id, kegg.native = T, species = "ko", low = "green", mid = "grey", high = "red", multi.state = state)
+      pvout <- pathview(cpd.data = newtable, pathway.id = id, kegg.native = T, species = "ko", low = "green", mid = "grey", high = "red", multi.state = state, limit = list(cpd = c(minValue, maxValue)))
+  
       if(state == FALSE){
         filename <- paste0("ko",id,".pathview.png")
       }else{
@@ -113,4 +117,24 @@ makePathway <- function(input, newtable,output, state){
       print("map geplaatst")
     }
   })
+}
+
+# Bepalen van de maximale waarde die voorkomt in de tabel. Deze wordt altijd naar boven afgerond
+getMaxValue <- function(newtable){
+  log2data <- matrix(as.numeric(unlist(newtable)),nrow=nrow(newtable))
+  index_maxValue <- which(log2data == max(log2data), arr.ind = TRUE)
+  maxValue <- newtable[index_maxValue[1,1], index_maxValue[1,2]]
+  ceiling_maxValue <- ceiling(as.numeric(maxValue))
+
+  return(ceiling_maxValue)
+}
+
+# Bepalen van de minimale waarde die voorkomt in de tabel. Deze wordt altijd naar beneden afgerond.
+getMinValue <- function(newtable){
+  log2data <- matrix(as.numeric(unlist(newtable)),nrow=nrow(newtable))
+  index_minValue <- which(log2data == min(log2data), arr.ind = TRUE)
+  minValue <- newtable[index_minValue[1,1], index_minValue[1,2]]
+  floor_minValue <- floor(as.numeric(minValue))
+
+  return(floor_minValue)
 }

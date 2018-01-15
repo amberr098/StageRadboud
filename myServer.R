@@ -19,10 +19,10 @@ myServer <- function(input, output, session) {
   observeEvent(input$uploadTime, {
     source("Time.R")
     timeMain(input, output, session)
-    
-    #### PATHWAYS ####
+
+        #### PATHWAYS ####
     source("PathwayTime.R")
-    main(output, input, session)
+    main(output, input, session, input$fileTime$datapath, input$fileTime)
   })
   
 
