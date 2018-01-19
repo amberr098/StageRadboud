@@ -1,3 +1,4 @@
+# Het weergeven van alle opgeslagen compounds met IDs in de webinterface. 
 setAllCompounds <- function(count_save_button, session){
   # Ophalen alle opgeslagen compounds
   source("PathwaySavedCompounds.R")
@@ -34,6 +35,8 @@ setAllCompounds <- function(count_save_button, session){
   return(allChoices)
 }
 
+# De mogelijkheid om compounds te verwijderen in de webinterface. Zodra de compound wel nodig is voor de pathway, wordt 
+# de compound weergeven bij de lijst met compounds die nog ingevuld moeten worden.
 removeSelectedCompounds <- function(all_selected_compounds, session, allCompounds, unsaved_compounds){
   # Ophalen alle opgeslagen compounds
   source("PathwaySavedCompounds.R")

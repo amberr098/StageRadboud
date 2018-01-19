@@ -1,3 +1,6 @@
+# Een matrix met alle compounds als kolomnamen en de twee gekozen condities door de gebruiker als rijnamen.
+# De matrix is gevuld met de data zoals het in het ingevoerde csv bestand staat. Deze functie wordt alleen 
+# bij de bestanden met Time data aangeroepen
 getDataConditions <- function(condition1, condition2, Resp_dataframe){
   preDataConditions <- list()
   

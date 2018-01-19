@@ -1,3 +1,5 @@
+# Deze functie wordt aangeroepen wanneer er steady state data is ingevoerd. Het dataframe met alle data zoals het in het csv bestand staat
+# wordt omgezet naar een dataframe met als kolomnamen de compounds en als rijnamen de samples. De dataframe is gevuld met genormaliseerde waarden
 changeFormat <- function(norm_Responses){
   # Bepalen van de kolomnamen
   pattern_firstCol <- " Results"
@@ -39,6 +41,6 @@ changeFormat <- function(norm_Responses){
   formatData <- matrix(as.numeric(unlist(preFormatData)),nrow=nrow(preFormatData))
   rownames(formatData) <- rown
   colnames(formatData) <- adding_coln
-  
+
   return(formatData)
 }

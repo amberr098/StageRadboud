@@ -1,3 +1,4 @@
+# Het ophalen van de KEGG mappen waarin de compounds voorkomen
 getMostCommonMaps <- function(input, output, tableIDs, session){
   # De rijnamen worden de compound IDs die worden opgehaald en opgeslagen in allIDs
   newtable <- t(tableIDs)

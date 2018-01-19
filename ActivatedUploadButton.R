@@ -66,9 +66,7 @@ checkFileSteadyState <- function(datapath, file, session, output){
     output$black_white_option <- renderUI({
       checkboxInput(inputId = "black_white", label = "Black/White")
     })
-    
-    # Zorgt dat de Settings tab ge-update word 
-    updateTabsetPanel(session = session, inputId = "tabs", selected = "Settings")
+
     return(data)
   }else{
     # Exceptie wanneer er geen .csv bestand is ingevoerd
@@ -153,9 +151,6 @@ setOptionsTime <- function(output, session, Resp_dataframe){
     actionButton(inputId = "plotButton",
                  label = "Plot")
   })
-  
-  # Naar de tab Settings gaan wanneer er op de uploadbutton is geklikt
-  updateTabsetPanel(session = session, inputId = "tabs", selected = "Settings")
   
   return(Resp_dataframe)
 }

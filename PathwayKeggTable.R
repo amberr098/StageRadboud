@@ -1,3 +1,4 @@
+# De compound namen (kolomnamen) veranderen in de bijbehorende KEGG IDs. 
 placeIDs <- function(){
   # Ophalen de dataframe met daarin de compounds en bijbehorende ids
   source("PathwaySavedCompounds.R")

@@ -1,13 +1,24 @@
 unsaved_compounds <- NULL
 
+# Hier worden alle functies aangeroepen die te maken hebben met de visualisatie van de pathway met tijdspunten
 main <- function(output, input, session, datapath, file){
   source("ActivatedUploadButton.R")
   Resp_dataframe <- checkFileTime(datapath, file, session, output)
 
+  if(length(Resp_dataframe) == 0){
+    invisible("geen csv file")
+  }else{
+    checkedFile(Resp_dataframe, output, input, session, datapath, file)
+  }
+}
+
+# Deze functie wordt alleen aangeroepen wanneer er gecontroleerd is dat het ingevoerde bestand een .csv bestand is.
+checkedFile <- function(Resp_dataframe, output, input, session, datapath, file){
+  
   # Plaatsen van de selectInput waarin de keuze staat voor een conditie
   source("PathwayConditions.R")
   setConditionsTime(Resp_dataframe, output, input)
-
+  
   # Wordt geactiveerd wanneer er op de "Calculate fold change" button wordt geklikt
   observeEvent(input$calcFoldChange, {
     
@@ -18,11 +29,11 @@ main <- function(output, input, session, datapath, file){
     # ratio bepalen door de 13C kolommen te delen door de 12C kolommen.
     source("PathwayFoldChange.R")
     ratios <- getRatioTime(dataConditionNumeric)
-
+    
     # Gemiddelde van duplicaten nemen
     source("TimeNormalisation.R")
     average_df <- getAverageC13C12(ratios)
-
+    
     # Fold change berekenen en de log2 daarvan nemen. 
     source("PathwayFoldChange.R")
     log2 <- getFoldChangeTime(average_df)

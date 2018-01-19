@@ -1,3 +1,5 @@
+# Een dataframe gegenereerd waarin de twee gekozen condities door elkaar gedeeld worden. kolomnamen zijn de compounds,
+# rijnaam is "Ratio"
 getRatio <- function(CondMatrix){
   preRatioDataframe <- list()
   
@@ -15,10 +17,11 @@ getRatio <- function(CondMatrix){
   ratioDataframe <- as.data.frame(preRatioDataframe)
   colnames(ratioDataframe) <- colnames(CondMatrix)
   rownames(ratioDataframe) <- "Ratio"
-  
+  View(ratioDataframe)
   getLog2(ratioDataframe, ratio)
 }
 
+# De log2 wordt berekent van de ratios van de twee gekozen condities. 
 getLog2 <- function(ratioDataframe, ratio){
   preLog2Dataframe <- list()
   
@@ -30,6 +33,8 @@ getLog2 <- function(ratioDataframe, ratio){
   log2Dataframe <<- as.data.frame(preLog2Dataframe)
   colnames(log2Dataframe) <<- colnames(ratioDataframe)
   rownames(log2Dataframe) <<- "log2"
+  
+  View(log2Dataframe)
 }
 
 # C13 kolommen delen door C12 kolommen
@@ -118,6 +123,7 @@ getFoldChangeTime <- function(average_ratios){
   log2 <- getLog2Time(FoldChanges)
 }
 
+# Log2 berekenen van de dataset met Time waarden.
 getLog2Time <- function(FoldChanges){
   preLog2 <- list()
 

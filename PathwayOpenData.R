@@ -1,3 +1,4 @@
+# File checken op de seperator en checken of het wel een .csv bestand is.
 checkFileSteadyState <- function(datapath, file, session, output){
   # Wanneer er op de upload button wordt geklikt, maar er geen file in ingevoerd. 
   if(is.null(datapath)){
@@ -29,11 +30,15 @@ checkFileSteadyState <- function(datapath, file, session, output){
   if(csvFile == TRUE){
     # Openen van het bestand
     pathwayData <- openFile(datapath, sep)
+    return(pathwayData)
+  }else{
+    return(NULL)
   }
   
-  return(pathwayData)
+  
 }
 
+# Bestand openen wanneer er gecontroleerd is dat het een .csv bestand is. 
 openFile <- function(path, separator){
   # Op basis van de keuze van de gebruiker een .csv file openen.
   if(!is.null(separator)){
