@@ -17,7 +17,7 @@ getRatio <- function(CondMatrix){
   ratioDataframe <- as.data.frame(preRatioDataframe)
   colnames(ratioDataframe) <- colnames(CondMatrix)
   rownames(ratioDataframe) <- "Ratio"
-  View(ratioDataframe)
+
   getLog2(ratioDataframe, ratio)
 }
 

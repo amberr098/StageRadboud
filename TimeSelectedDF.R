@@ -7,6 +7,7 @@ getSelectedDataframe <- function(samples, molecules, average_df, standev_df){
     col_ind <- which(colnames(average_df) == paste0(mol, " Results"), arr.ind = T)
     for(sam in samples){
       samples_row <- grep(sam, rownames(average_df))
+   
       for(row in samples_row){
         rown <- rownames(average_df)[row]
         

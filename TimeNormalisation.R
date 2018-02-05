@@ -14,14 +14,15 @@ C13_dividedBy_C12 <- function(Resp_dataframe){
       }
     }
   }
-  
+
   norm_list <- list()
   column_names_matrix <- c()
   for(col in firstCol:ncol(Resp_matrix)){
     # Alle 13C moleculen ophalen
     if(grepl(pattern, colnames(Resp_matrix)[col]) == FALSE){
       coln <- colnames(Resp_matrix)[col]
-      coln_numbers <- grep(coln, colnames(Resp_matrix))
+      coln_numbers <- grep(coln,colnames(Resp_matrix))
+
       # Als coln_number kleiner is dan 3, dan bevat het molecuul alleen één 13C en één 12C kolom
       if(length(coln_numbers)< 3){
         col1 <- coln_numbers[1]
@@ -30,7 +31,7 @@ C13_dividedBy_C12 <- function(Resp_dataframe){
         # Alle waarden van de 13C en 12C kolommen ophalen en de Resp. verwijderen door [-1]
         C13_values <- Resp_matrix[,col1][-1]
         C12_values <- Resp_matrix[,col2][-1]
-        
+       
         # De twee kolommen door elkaar delen
         norm_values <- as.numeric(C13_values)/as.numeric(C12_values)
         

@@ -1,5 +1,5 @@
 setTimePlot <- function(average_df, standev_df, input, output, session){
-  
+
   # Ophalen van het dataframe waarin alle geselecteerde waarden staan op basis van de keuze vande gebruiker.
   source("TimeSelectedDF.R")
   selected_dataframe <<- getSelectedDataframe(input$sampleChoices, input$moleculeChoices, average_df, standev_df)

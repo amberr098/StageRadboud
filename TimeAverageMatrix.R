@@ -16,6 +16,7 @@ getAverageData <- function(Resp_dataframe){
   ###### AVERAGE - ABSOLUTE########
   allNames <- c()
   col_Name <- which(Resp_matrix[1,] == "Name")
+
   for(row in 1:nrow(Resp_matrix)){
     if(!Resp_matrix[row,col_Name] == "Name"){
       allNames <- c(allNames, Resp_matrix[row,col_Name])
@@ -34,13 +35,15 @@ getAverageData <- function(Resp_dataframe){
     # Alleen de samples pakken met een tijd.
     if(grepl(pattern_time, name) == TRUE){
       rown <- c(rown,name)
-      same_samples_index <- grep(name, Resp_matrix[,col_Name])
+      # same_samples_index <- grep(name, Resp_matrix[,col_Name])
+      same_samples_index <- which(Resp_matrix[,col_Name] == name)
       average_row <- c()
       for(col in firstCol:ncol(Resp_matrix)){
         values <- c()
         for(row in same_samples_index){
           values <- c(values,as.numeric(Resp_matrix[row,col]))
         }
+      
         # Alle gemiddelden van de rij in een vector zetten
         average_row <- c(average_row, mean(values))
       }
@@ -51,7 +54,7 @@ getAverageData <- function(Resp_dataframe){
   average_df <- as.data.frame(temp_average_df)
   colnames(average_df) <- coln
   rownames(average_df) <- rown
-
+  
   return(average_df)
 }
 
@@ -91,7 +94,7 @@ getStandevData <- function(Resp_dataframe){
     # Alleen de samples pakken met een tijd.
     if(grepl(pattern_time, name) == TRUE){
       rown <- c(rown,name)
-      same_samples_index <- grep(name, Resp_matrix[,col_Name])
+      same_samples_index <- which(Resp_matrix[,col_Name] == name)
       standev_row <- c()
       for(col in firstCol:ncol(Resp_matrix)){
         values <- c()
