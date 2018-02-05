@@ -33,32 +33,32 @@ getLog2 <- function(ratioDataframe, ratio){
   log2Dataframe <<- as.data.frame(preLog2Dataframe)
   colnames(log2Dataframe) <<- colnames(ratioDataframe)
   rownames(log2Dataframe) <<- "log2"
-  
-  View(log2Dataframe)
+
 }
 
 # C13 kolommen delen door C12 kolommen
 getRatioTime <- function(dataConditionNumeric){
+
   pattern <- "13C.{1,2}-"
   coln <- c()
   preRatios <- list()
   
   # Ophalen van alle 13C kolommen
   all13C <- grep(pattern, colnames(dataConditionNumeric))
-
   for(index_C13 in all13C){
     C13 <- colnames(dataConditionNumeric)[index_C13]
+
     compound <- gsub(pattern, "", C13)
     index_C12 <- which(colnames(dataConditionNumeric) == compound)
-    
+
     # De values op halen van de kolommen die gedeeld door elkaar moeten worden
     valuesC13 <- dataConditionNumeric[,index_C13]
     valuesC12 <- dataConditionNumeric[,index_C12]
-    
+
+    C13divC12 <- valuesC13/valuesC12
+
     C12 <- gsub(" Results", "", colnames(dataConditionNumeric)[index_C12])
     C12 <- gsub("-", "_", C12)
-    
-    C13divC12 <- valuesC13/valuesC12
 
     preRatios <- cbind(preRatios, C13divC12)
     coln <- c(coln, C12)
@@ -75,7 +75,7 @@ getRatioTime <- function(dataConditionNumeric){
 getFoldChangeTime <- function(average_ratios){
   rown <- c()
   new_col <- c()
-  
+
   # Sample en time apart nemen zodat dezelfde tijden door elkaar gedeeld kunnen worden
   for(name in rownames(average_ratios)){
     sample_time <- unlist(strsplit(name, "_"))
@@ -119,8 +119,10 @@ getFoldChangeTime <- function(average_ratios){
   rownames(FoldChanges) <- unique_times
   colnames(FoldChanges) <- colnames(average_ratios[-length(average_ratios)])
   
+  
   # Log2 van de foldchanges berekenen
   log2 <- getLog2Time(FoldChanges)
+  log2 <- replace(log2, is.na(log2), 0)
 }
 
 # Log2 berekenen van de dataset met Time waarden.

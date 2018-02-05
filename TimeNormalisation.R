@@ -22,16 +22,24 @@ C13_dividedBy_C12 <- function(Resp_dataframe){
     if(grepl(pattern, colnames(Resp_matrix)[col]) == FALSE){
       coln <- colnames(Resp_matrix)[col]
       coln_numbers <- grep(coln,colnames(Resp_matrix))
-
+  
       # Als coln_number kleiner is dan 3, dan bevat het molecuul alleen één 13C en één 12C kolom
       if(length(coln_numbers)< 3){
-        col1 <- coln_numbers[1]
-        col2 <- coln_numbers[2]
+        # Controleren welke van de twee kolommen de 13C kolom is
+        if(grepl(pattern, colnames(Resp_matrix)[coln_numbers[1]]) == TRUE){
+          column_names_matrix <- c(column_names_matrix, colnames(Resp_matrix)[coln_numbers[1]])
+          col13C <- coln_numbers[1]
+          col12C <- coln_numbers[2]
+        }else{
+          column_names_matrix <- c(column_names_matrix, colnames(Resp_matrix)[coln_numbers[2]])
+          col13C <- coln_numbers[2]
+          col12C <- coln_numbers[1]
+        }
         
         # Alle waarden van de 13C en 12C kolommen ophalen en de Resp. verwijderen door [-1]
-        C13_values <- Resp_matrix[,col1][-1]
-        C12_values <- Resp_matrix[,col2][-1]
-       
+        C13_values <- Resp_matrix[,col13C][-1]
+        C12_values <- Resp_matrix[,col12C][-1]
+
         # De twee kolommen door elkaar delen
         norm_values <- as.numeric(C13_values)/as.numeric(C12_values)
         
@@ -51,13 +59,13 @@ C13_dividedBy_C12 <- function(Resp_dataframe){
               # Kolommen delen door elkaar: elke C13 variant delen door C12 kolom
               norm_values <- as.numeric(C13_values)/as.numeric(C12_values)
               norm_list <- cbind(norm_list, norm_values)
-              
+              column_names_matrix <- c(column_names_matrix, colnames(Resp_matrix)[num])
             }
           }
         }
       }
     }else{
-      column_names_matrix <- c(column_names_matrix, colnames(Resp_matrix)[col])
+      
     }
   }
   
@@ -68,7 +76,7 @@ C13_dividedBy_C12 <- function(Resp_dataframe){
   norm_matrix <- as.matrix(norm_list)
   colnames(norm_matrix) <- column_names_matrix
   rownames(norm_matrix) <- rown
-  
+
   return(norm_matrix)
 }
 
@@ -97,6 +105,7 @@ getAverageC13C12 <- function(norm_matrix){
   average_df <- as.data.frame(average_list)
   colnames(average_df) <- colnames(norm_matrix)
   rownames(average_df) <- unique_names
+
   return(average_df)
 }
 

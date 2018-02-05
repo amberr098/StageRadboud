@@ -17,8 +17,8 @@ timeMain <- function(input, output, session){
     # Als de input TRUE geeft, is de normalisatie 13C/totaal. Anders is het 13C/12C
     if(input$switch_norm == FALSE){
       norm_matrix <- C13_dividedBy_C12(Resp_dataframe)
-      # average_df <<- getAverageC13C12(norm_matrix)
-      # standev_df <<- getStanDevC13C12(norm_matrix)
+      average_df <<- getAverageC13C12(norm_matrix)
+      standev_df <<- getStanDevC13C12(norm_matrix)
       
     }else{
       norm_values_matrix <- C13_dividedBy_total(Resp_dataframe)

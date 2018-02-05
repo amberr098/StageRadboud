@@ -124,6 +124,7 @@ makePathway <- function(input, newtable,output, state){
 getMaxValue <- function(newtable){
   log2data <- matrix(as.numeric(unlist(newtable)),nrow=nrow(newtable))
   index_maxValue <- which(log2data == max(log2data), arr.ind = TRUE)
+
   maxValue <- newtable[index_maxValue[1,1], index_maxValue[1,2]]
   ceiling_maxValue <- ceiling(as.numeric(maxValue))
 
