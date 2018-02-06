@@ -4,7 +4,9 @@ getMostCommonMaps <- function(input, output, tableIDs, session){
   newtable <- t(tableIDs)
   colnames(newtable) <- NULL
   allIDs <- rownames(newtable)
-
+  newtable[newtable == -Inf] <- 0
+  newtable[newtable == Inf] <- 0
+  
   # Achterhalen hoevaak er 10 IDs gepakt moeten worden (keggGet kan maar per 10 IDs)
   numberIDs <- length(allIDs)
   numberOfLoops <- ceiling(numberIDs/10)
@@ -58,11 +60,11 @@ getMaps <- function(allIDs, allmaps){
   for(index in 1:length(allIDs)){
     maps <- getkegg[[index]]$PATHWAY
     getMapsID <- as.matrix(maps)
-    mapsID <- rownames(getMapsID)
     
+    mapsID <- rownames(getMapsID)
     allmaps <- c(allmaps, mapsID)
   }
-  
+
   return(allmaps)
 }
 
@@ -100,7 +102,7 @@ makePathway <- function(input, newtable,output, state){
       ))
     }else{
      
-      pvout <- pathview(cpd.data = newtable, pathway.id = id, kegg.native = T, species = "ko", low = "green", mid = "grey", high = "red", multi.state = state, limit = list(cpd = c(minValue, maxValue)))
+      pvout <- pathview(cpd.data = newtable, pathway.id = id, kegg.native = T, species = "ko", low = "green", mid = "grey", high = "red", multi.state = state, limit = list(cpd = c(-10, 12)))
   
       if(state == FALSE){
         filename <- paste0("ko",id,".pathview.png")
