@@ -123,6 +123,7 @@ getFoldChangeTime <- function(average_ratios){
   # Log2 van de foldchanges berekenen
   log2 <- getLog2Time(FoldChanges)
   log2 <- replace(log2, is.na(log2), 0)
+  
 }
 
 # Log2 berekenen van de dataset met Time waarden.

@@ -6,7 +6,7 @@ getMostCommonMaps <- function(input, output, tableIDs, session){
   allIDs <- rownames(newtable)
   newtable[newtable == -Inf] <- 0
   newtable[newtable == Inf] <- 0
-  
+
   # Achterhalen hoevaak er 10 IDs gepakt moeten worden (keggGet kan maar per 10 IDs)
   numberIDs <- length(allIDs)
   numberOfLoops <- ceiling(numberIDs/10)
@@ -82,8 +82,17 @@ placeMaps <- function(output, allOptions, session){
 # Maken van de pathway op basis van de keuze van de gebruiker
 makePathway <- function(input, newtable,output, state){
   observeEvent(input$sendMap, {
-    maxValue <- getMaxValue(newtable)
-    minValue <- getMinValue(newtable)
+    max <- getMaxValue(newtable)
+    min <- getMinValue(newtable)
+    
+    # Zorgen dat het midden 0 is van de schaal
+    if(abs(min) > max){
+      minValue <- min
+      maxValue <- abs(min)
+    }else{
+      minValue <- -max
+      maxValue <- max
+    }
     
     # Ophalen van de keuze van de gebruiker
     keggMap <- input$KEGGMAP
@@ -102,7 +111,7 @@ makePathway <- function(input, newtable,output, state){
       ))
     }else{
      
-      pvout <- pathview(cpd.data = newtable, pathway.id = id, kegg.native = T, species = "ko", low = "green", mid = "grey", high = "red", multi.state = state, limit = list(cpd = c(-10, 12)))
+      pvout <- pathview(cpd.data = newtable, pathway.id = id, kegg.native = T, species = "ko", low = "green", mid = "grey", high = "red", multi.state = state, limit = list(cpd = c(minValue, maxValue)))
   
       if(state == FALSE){
         filename <- paste0("ko",id,".pathview.png")

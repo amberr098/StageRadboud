@@ -33,7 +33,7 @@ checkedFile <- function(Resp_dataframe, output, input, session, datapath, file){
     # Gemiddelde van duplicaten nemen
     source("TimeNormalisation.R")
     average_df <- getAverageC13C12(ratios)
-    
+ 
     # Fold change berekenen en de log2 daarvan nemen. 
     source("PathwayFoldChange.R")
     log2 <- getFoldChangeTime(average_df)

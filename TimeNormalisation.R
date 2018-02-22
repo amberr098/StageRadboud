@@ -82,6 +82,10 @@ C13_dividedBy_C12 <- function(Resp_dataframe){
 
 # Het gemiddelde van duplicated samples berekenen
 getAverageC13C12 <- function(norm_matrix){
+  # Verwijderen van inf en NaNs, anders kan er geen gemiddelde of sd berekent worden. 
+  norm_matrix[norm_matrix == Inf] <- 0
+  norm_matrix[is.na(norm_matrix)] <- 0
+  
   average_list <- list()
   unique_names <- unique(rownames(norm_matrix))
   
@@ -111,6 +115,10 @@ getAverageC13C12 <- function(norm_matrix){
 
 # De standaard deviatie van duplicated samples berekenen
 getStanDevC13C12 <- function(norm_matrix){
+  # Verwijderen van inf en NaNs, anders kan er geen gemiddelde of sd berekent worden. 
+  norm_matrix[norm_matrix == Inf] <- 0
+  norm_matrix[is.na(norm_matrix)] <- 0
+  
   sd_list <- list()
   unique_names <- unique(rownames(norm_matrix))
   
@@ -247,6 +255,10 @@ getNormValues <- function(Resp_matrix, total_counts_matrix,pattern, firstCol){
 
 # Average berekenen van de C13 kolommen die gedeeld zijn door het totaal
 getAverageC13Total <- function(norm_values_matrix){
+  # Verwijderen van inf en NaNs, anders kan er geen gemiddelde of sd berekent worden. 
+  norm_values_matrix[norm_values_matrix == Inf] <- 0
+  norm_values_matrix[is.na(norm_values_matrix)] <- 0
+  
   all_samples <- unique(rownames(norm_values_matrix))
   list_average <- list()
   coln_average <- c()
@@ -280,6 +292,10 @@ getAverageC13Total <- function(norm_values_matrix){
 }
 
 getStanDevC13Total <- function(norm_values_matrix){
+  # Verwijderen van inf en NaNs, anders kan er geen gemiddelde of sd berekent worden. 
+  norm_values_matrix[norm_values_matrix == Inf] <- 0
+  norm_values_matrix[is.na(norm_values_matrix)] <- 0
+  
   all_samples <- unique(rownames(norm_values_matrix))
   list_sd <- list()
   coln_sd <- c()

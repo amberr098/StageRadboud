@@ -1,37 +1,46 @@
 getSelectedDataframe <- function(samples, molecules, average_df, standev_df){
+  
   pattern <- "13C.{1,2}-"
   list_for_df <- list()
-  
+
+  # Ophalen van een matrix waaruit de index van de rij kan worden gehaald van de gekozen samples
+  getIndexMatrix <- getRowNumbers(average_df)
+
   for(mol in molecules){
     # Aan het molecule Results toevoegen zodat het herkend kan worden in de average_df
     col_ind <- which(colnames(average_df) == paste0(mol, " Results"), arr.ind = T)
     for(sam in samples){
-      samples_row <- grep(sam, rownames(average_df))
-   
-      for(row in samples_row){
-        rown <- rownames(average_df)[row]
-        
-        # Van 0h, 1h bijv 0, 1 maken.
-        sam_time <- unlist(strsplit(rown, "_"))
-        time <- sam_time[2]
-        num_time <- as.numeric(gsub("\\D", "", time))
-        
-        # Average en standaard deviatie ophalen. 
-        average <- average_df[row,col_ind]
-        sd <- standev_df[row, col_ind]
-        half_sd <- as.numeric(sd)/2
+      samples_row <- grep(sam, rownames(getIndexMatrix))
 
-        # Het splitsen van het molecuul en de variant: 13C6-CMP-Neu5Gc in molecuul: CMP-neu5Gc, variant: 13C6
-        if(grepl(pattern,mol) == TRUE){
-          C13_variant_temp <- regmatches(mol, regexpr(pattern, mol))
-          C_variant <- gsub("-", "", C13_variant_temp)
-          C_molecule <- gsub(pattern, "", mol)
-        }else{
-          C_variant <- "12C"
-          C_molecule <- mol
+      for(row in samples_row){
+        
+        if(identical(sam, rownames(getIndexMatrix)[row]) == TRUE){
+          
+          rown <- rownames(average_df)[row]
+          
+          # Van 0h, 1h bijv 0, 1 maken.
+          sam_time <- unlist(strsplit(rown, "_"))
+          
+          time <- sam_time[2]
+          num_time <- as.numeric(gsub("\\D", "", time))
+          
+          # Average en standaard deviatie ophalen. 
+          average <- average_df[row,col_ind]
+          sd <- standev_df[row, col_ind]
+          half_sd <- as.numeric(sd)/2
+          
+          # Het splitsen van het molecuul en de variant: 13C6-CMP-Neu5Gc in molecuul: CMP-neu5Gc, variant: 13C6
+          if(grepl(pattern,mol) == TRUE){
+            C13_variant_temp <- regmatches(mol, regexpr(pattern, mol))
+            C_variant <- gsub("-", "", C13_variant_temp)
+            C_molecule <- gsub(pattern, "", mol)
+          }else{
+            C_variant <- "12C"
+            C_molecule <- mol
+          }
+          new_row <- c(sam_time[1], num_time, C_molecule, C_variant, average,sd, half_sd)
+          list_for_df <- rbind(list_for_df, new_row)
         }
-        new_row <- c(sam_time[1], num_time, C_molecule, C_variant, average,sd, half_sd)
-        list_for_df <- rbind(list_for_df, new_row)
       }
     }
   }
@@ -73,4 +82,17 @@ getShowDataframe <- function(samples, molecules, average_df, standev_df){
   colnames(showDataFrame) <- c("Samples", "Molecules", "Average", "SD")
   
   return(showDataFrame)
+}
+
+getRowNumbers <- function(average_df){
+  getIndexMatrix <- as.matrix(average_df)
+  
+  for(row in 1:nrow(average_df)){
+    if(grepl("_", rownames(average_df)[row]) == TRUE){
+      new_name <- unlist(strsplit(rownames(average_df)[row], "_"))[1]
+      rownames(getIndexMatrix)[row] <- new_name
+    }
+  }
+  
+  return(getIndexMatrix)
 }

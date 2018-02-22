@@ -13,7 +13,10 @@ getPlot <- function(selected_dataframe){
                               Average = as.numeric(selected_dataframe$Average),
                               SD = as.numeric(selected_dataframe$SD),
                               Half_SD = as.numeric(selected_dataframe$`Half SD`))
+  
+  
 
+  
   # Plot maken van de selected_data
   p <- ggplot(selected_data, aes(x = Time, 
                                  y = Average, 
@@ -21,11 +24,12 @@ getPlot <- function(selected_dataframe){
                                  colour = Variant, 
                                  linetype = Samples, 
                                  ymin = Average-Half_SD, 
-                                 ymax = Average+Half_SD))+
+                                 ymax = Average+Half_SD
+                                 ))+
     geom_line()+
     geom_point()+
     geom_errorbar(width=0.1)+
     facet_wrap(~Molecule, scales = "free")+
-    scale_x_continuous(breaks = x_axis_times)
+    scale_x_continuous(breaks = x_axis_times, limits = c(x_axis_times[1]-1, x_axis_times[length(x_axis_times)]+1))
   return(p)
 }
